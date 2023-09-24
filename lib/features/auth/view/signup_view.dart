@@ -2,7 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x/common/common.dart';
-import 'package:x/common/widgets/auth_field.dart';
+import 'package:x/features/auth/widgets/auth_field.dart';
 import 'package:x/constants/constants.dart';
 import 'package:x/features/auth/controller/auth_controller.dart';
 import 'package:x/theme/pallete.dart';
@@ -33,16 +33,19 @@ class _SignUpViewState extends ConsumerState<SignUpView> {
 
   void onSignUp() {
     // notifier used for access method
-    ref
-        .read(authControllerProvider.notifier)
-        .signUp(email: emailController.text, password: passwordController.text, context: context);
+    ref.read(authControllerProvider.notifier).signUp(
+        email: emailController.text,
+        password: passwordController.text,
+        context: context);
   }
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = ref.watch(authControllerProvider);
+
     return Scaffold(
         appBar: appbar,
-        body: Center(
+        body: isLoading  ? const LoadingWidget() :Center(
           child: SingleChildScrollView(
             child: Padding(
               padding: PaddingConstant.paddingHorinzontal25,
