@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x/common/common.dart';
 import 'package:x/features/auth/widgets/auth_field.dart';
-import 'package:x/common/widgets/loading_widget.dart';
 import 'package:x/constants/constants.dart';
 import 'package:x/features/auth/controller/auth_controller.dart';
 import 'package:x/theme/pallete.dart';

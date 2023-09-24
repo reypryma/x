@@ -12,7 +12,10 @@ final authApiProvider =
 
 abstract class AuthAPIInterface {
   FutureEither<User> signUp({required String email, required String password});
-  FutureEither<Session> login({required String email, required String password});
+  FutureEither<Session> login(
+      {required String email, required String password});
+  Future<User?> currentUserAccount();
+  FutureEitherVoid logout();
 }
 
 class AuthAPI implements AuthAPIInterface {
@@ -28,7 +31,7 @@ class AuthAPI implements AuthAPIInterface {
       return right(account);
     } on AppwriteException catch (e, stackTrace) {
       if (kDebugMode) {
-        print("sign up error ${e.message}" ?? 'App Write error');
+        print("sign up error ${e.message}");
       }
       return left(Failure(
           message: e.message ?? "App Write error", stackTrace: stackTrace));
@@ -36,12 +39,13 @@ class AuthAPI implements AuthAPIInterface {
       return left(Failure(message: e.toString(), stackTrace: stackTrace));
     }
   }
-  
+
   @override
-  FutureEither<Session> login({required String email, required String password}) async{
+  FutureEither<Session> login(
+      {required String email, required String password}) async {
     try {
-      final session = await _account.createEmailSession(
-          email: email, password: password);
+      final session =
+          await _account.createEmailSession(email: email, password: password);
       return right(session);
     } on AppwriteException catch (e, stackTrace) {
       if (kDebugMode) {
@@ -52,5 +56,21 @@ class AuthAPI implements AuthAPIInterface {
     } catch (e, stackTrace) {
       return left(Failure(message: e.toString(), stackTrace: stackTrace));
     }
+  }
+
+  @override
+  Future<User?> currentUserAccount() async {
+    final curentUser = await _account.get();
+    try {
+      return curentUser;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  @override
+  FutureEitherVoid logout() {
+    // TODO: implement logout
+    throw UnimplementedError();
   }
 }

@@ -1,6 +1,7 @@
+import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:x/common/widgets/common_widget.dart';
+import 'package:x/common/widgets/utils_widget.dart';
 import 'package:x/features/auth/view/login_view.dart';
 import 'package:x/features/home/view/home_view.dart';
 import 'package:x/repository/auth_api.dart';
@@ -9,6 +10,12 @@ final authControllerProvider =
     StateNotifierProvider<AuthController, bool>((ref) {
   return AuthController(ref.watch(authApiProvider));
 });
+
+final currentUserProvider = FutureProvider((ref) async {
+  AuthController authController = ref.watch(authControllerProvider.notifier);
+  return authController.currentUser();
+});
+
 
 class AuthController extends StateNotifier<bool> {
   final AuthAPI _authAPI;
@@ -41,4 +48,6 @@ class AuthController extends StateNotifier<bool> {
       Navigator.push(context, HomeView.route());
     });
   }
+
+  Future<User?> currentUser() => _authAPI.currentUserAccount();
 }
