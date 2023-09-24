@@ -20,11 +20,13 @@ class AuthAPI implements AuthAPIInterface {
   @override
   FutureEither<User> signUp(
       {required String email, required String password}) async {
+        print("Signup test");
     try {
       final account = await _account.create(
           userId: ID.unique(), email: email, password: password);
       return right(account);
     } on AppwriteException catch (e, stackTrace) {
+      print(e.message ?? 'App Write error');
       return left(Failure(
           message: e.message ?? "App Write error", stackTrace: stackTrace));
     } catch (e, stackTrace) {
