@@ -1,5 +1,6 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:x/core/core.dart';
@@ -11,6 +12,7 @@ final authApiProvider =
 
 abstract class AuthAPIInterface {
   FutureEither<User> signUp({required String email, required String password});
+  FutureEither<Session> login({required String email, required String password});
 }
 
 class AuthAPI implements AuthAPIInterface {
@@ -20,13 +22,31 @@ class AuthAPI implements AuthAPIInterface {
   @override
   FutureEither<User> signUp(
       {required String email, required String password}) async {
-        print("Signup test");
     try {
       final account = await _account.create(
           userId: ID.unique(), email: email, password: password);
       return right(account);
     } on AppwriteException catch (e, stackTrace) {
-      print(e.message ?? 'App Write error');
+      if (kDebugMode) {
+        print("sign up error ${e.message}" ?? 'App Write error');
+      }
+      return left(Failure(
+          message: e.message ?? "App Write error", stackTrace: stackTrace));
+    } catch (e, stackTrace) {
+      return left(Failure(message: e.toString(), stackTrace: stackTrace));
+    }
+  }
+  
+  @override
+  FutureEither<Session> login({required String email, required String password}) async{
+    try {
+      final session = await _account.createEmailSession(
+          email: email, password: password);
+      return right(session);
+    } on AppwriteException catch (e, stackTrace) {
+      if (kDebugMode) {
+        print(e.message ?? 'App Write error');
+      }
       return left(Failure(
           message: e.message ?? "App Write error", stackTrace: stackTrace));
     } catch (e, stackTrace) {

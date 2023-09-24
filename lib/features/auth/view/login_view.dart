@@ -1,22 +1,25 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x/common/common.dart';
-import 'package:x/common/widgets/auth_field.dart';
+import 'package:x/features/auth/widgets/auth_field.dart';
+import 'package:x/common/widgets/loading_widget.dart';
 import 'package:x/constants/constants.dart';
+import 'package:x/features/auth/controller/auth_controller.dart';
 import 'package:x/features/auth/view/signup_view.dart';
 import 'package:x/theme/pallete.dart';
 
-class LoginView extends StatefulWidget {
+class LoginView extends ConsumerStatefulWidget {
   static route() => MaterialPageRoute(
         builder: (context) => const LoginView(),
       );
   const LoginView({Key? key}) : super(key: key);
 
   @override
-  State<LoginView> createState() => _LoginViewState();
+  ConsumerState<LoginView> createState() => _LoginViewState();
 }
 
-class _LoginViewState extends State<LoginView> {
+class _LoginViewState extends ConsumerState<LoginView> {
   final appBar = UIConstants.appBar();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -28,11 +31,18 @@ class _LoginViewState extends State<LoginView> {
     super.dispose();
   }
 
+  void onLogin() {
+    ref.read(authControllerProvider.notifier).login(
+        email: emailController.text,
+        password: passwordController.text,
+        context: context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBar,
-      body: Center(
+      body: ref.watch(authControllerProvider) ? const LoadingWidget() : Center(
         child: SingleChildScrollView(
           child: Padding(
             padding: PaddingConstant.paddingHorinzontal25,
@@ -51,7 +61,7 @@ class _LoginViewState extends State<LoginView> {
                 Align(
                   alignment: Alignment.topRight,
                   child: RoundedSmallButton(
-                    onTap: () {},
+                    onTap: onLogin,
                     label: 'Done',
                   ),
                 ),
