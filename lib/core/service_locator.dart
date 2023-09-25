@@ -21,3 +21,9 @@ final appWriteClientProvider = Provider((ref) => Client()
 // watch is continiously, read is for once
 final appWriteAccountProvider =
     Provider((ref) => Account(ref.watch(appWriteClientProvider)));
+
+
+final appwriteDatabaseProvider = Provider((ref) {
+  final client = ref.watch(appWriteClientProvider);
+  return Databases(client);
+});
