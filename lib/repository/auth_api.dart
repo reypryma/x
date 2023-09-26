@@ -28,6 +28,7 @@ class AuthAPI implements AuthAPIInterface {
     try {
       final account = await _account.create(
           userId: ID.unique(), email: email, password: password);
+      print("Get user $account");
       return right(account);
     } on AppwriteException catch (e, stackTrace) {
       if (kDebugMode) {
@@ -60,17 +61,30 @@ class AuthAPI implements AuthAPIInterface {
 
   @override
   Future<User?> currentUserAccount() async {
-    final curentUser = await _account.get();
     try {
+      final curentUser = await _account.get();
       return curentUser;
     } catch (e) {
+      print("Error current user $e");
       return null;
     }
   }
 
   @override
-  FutureEitherVoid logout() {
-    // TODO: implement logout
-    throw UnimplementedError();
+  FutureEitherVoid logout() async {
+    try {
+      await _account.deleteSession(
+        sessionId: 'current',
+      );
+      return right(null);
+    } on AppwriteException catch (e, stackTrace) {
+      return left(
+        Failure(message: e.message ?? 'Some unexpected error occurred', stackTrace: stackTrace),
+      );
+    } catch (e, stackTrace) {
+      return left(
+        Failure(message: e.toString(),stackTrace:  stackTrace),
+      );
+    }
   }
 }

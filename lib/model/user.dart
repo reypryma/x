@@ -50,17 +50,22 @@ class UserModel {
   }
 
   Map<String, dynamic> toMap() {
-    return {
+    final map = {
       'email': email,
       'name': name,
       'followers': followers,
       'following': following,
       'profilePic': profilePic,
       'bannerPic': bannerPic,
-      'uid': uid,
       'bio': bio,
       'isTwitterBlue': isTwitterBlue,
     };
+
+    // if (uid != null) {
+    //   map['uid'] = uid!;
+    // }
+
+    return map;
   }
 
   factory UserModel.fromMap(Map<String, dynamic> map) {

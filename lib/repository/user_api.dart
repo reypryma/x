@@ -53,6 +53,7 @@ class UserAPI extends UserAPIInterface {
   @override
   FutureEitherVoid saveUserData(UserModel userModel) async {
     try {
+      print('got the saved user data ${userModel}');
       await _db.createDocument(
           databaseId: AppwriteConstants.databaseId,
           collectionId: AppwriteConstants.usersCollection,
@@ -60,6 +61,7 @@ class UserAPI extends UserAPIInterface {
           data: userModel.toMap());
       return right(null);
     } on AppwriteException catch (e, st) {
+      print('vailed  create data user $e with ${st.toString()}');
       return left(
         Failure(message: e.message!, stackTrace: st),
       );

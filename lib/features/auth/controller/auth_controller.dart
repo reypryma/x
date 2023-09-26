@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x/common/widgets/utils_widget.dart';
 import 'package:x/features/auth/view/login_view.dart';
+import 'package:x/features/auth/view/signup_view.dart';
 import 'package:x/features/home/view/home_view.dart';
 import 'package:x/model/user.dart';
 import 'package:x/repository/auth_api.dart';
@@ -43,12 +44,19 @@ class AuthController extends StateNotifier<bool> {
           profilePic: '',
           bannerPic: '',
           bio: '',
+          uid: r.$id,
           isTwitterBlue: false);
       final resSaveUserData = await _userAPI.saveUserData(userModel);
-      resSaveUserData.fold((l) => showSnackBar(context, l.message), (r) {
-        showSnackBar(context, 'Accounted created! Please login.');
-        Navigator.push(context, LoginView.route());
-      });
+      resSaveUserData.fold(
+        (l) {
+          print('error resSaveUserData ${l.stackTrace}');
+          showSnackBar(context, l.message);
+        },
+        (r) {
+              showSnackBar(context, 'Accounted created! Please login.');
+              Navigator.push(context, LoginView.route());
+            }
+      );
     });
   }
 
@@ -67,4 +75,15 @@ class AuthController extends StateNotifier<bool> {
   }
 
   Future<User?> currentUser() => _authAPI.currentUserAccount();
+
+  void logout(BuildContext context) async {
+    final res = await _authAPI.logout();
+    res.fold((l) => null, (r) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        SignUpView.route(),
+            (route) => false,
+      );
+    });
+  }
 }
