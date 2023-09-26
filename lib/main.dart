@@ -30,8 +30,7 @@ class MyApp extends ConsumerWidget {
             return const SignUpView();
           },
           error: (error, st) {
-            print("error $st");
-            ref.read(authControllerProvider.notifier).logout(context);
+            // ref.read(authControllerProvider.notifier).logout(context);
             return ErrorPage(
               error: error.toString(),
             );

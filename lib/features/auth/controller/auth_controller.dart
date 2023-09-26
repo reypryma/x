@@ -74,7 +74,7 @@ class AuthController extends StateNotifier<bool> {
     });
   }
 
-  Future<User?> currentUser() => _authAPI.currentUserAccount();
+  Future<User?> currentUser() async => _authAPI.currentUserAccount();
 
   void logout(BuildContext context) async {
     final res = await _authAPI.logout();
