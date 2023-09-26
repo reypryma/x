@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:x/features/home/fragments/explore/view/explore_view.dart';
+import 'package:x/features/home/fragments/notification/view/notification_view.dart';
+import 'package:x/features/home/fragments/tweet/view/tweet_view.dart';
 import 'package:x/theme/pallete.dart';
 
 import 'constants.dart';
@@ -18,6 +21,8 @@ class UIConstants {
   }
 
   static const List<Widget> bottomTabBarPages = [
-
+    TweetListView(),
+    ExploreView(),
+    NotificationView(),
   ];
 }
