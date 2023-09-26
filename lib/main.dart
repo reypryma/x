@@ -23,12 +23,15 @@ class MyApp extends ConsumerWidget {
       theme: AppTheme.theme,
       home: ref.watch(currentUserProvider).when(
           data: (user) {
+            print("get current user in first $user");
             if (user != null) {
               return const HomeView();
             }
             return const SignUpView();
           },
           error: (error, st) {
+            print("error $st");
+            ref.read(authControllerProvider.notifier).logout(context);
             return ErrorPage(
               error: error.toString(),
             );
