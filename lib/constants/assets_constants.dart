@@ -15,4 +15,5 @@ class AssetsConstants {
   static const String likeFilledIcon = '$_svgsPath/like_filled.svg';
   static const String viewsIcon = '$_svgsPath/views.svg';
   static const String verifiedIcon = '$_svgsPath/verified.svg';
+  static const String blankImage = 'https://www.publicdomainpictures.net/pictures/320000/velka/woman-with-blank-board-1579528229AjP.jpg';
 }
