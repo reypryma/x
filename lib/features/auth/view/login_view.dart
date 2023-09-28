@@ -44,7 +44,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
       body: ref.watch(authControllerProvider) ? const LoadingWidget() : Center(
         child: SingleChildScrollView(
           child: Padding(
-            padding: PaddingConstant.paddingHorinzontal25,
+            padding: PaddingConstant.paddingHorizontal25,
             child: Column(
               children: [
                 AuthField(

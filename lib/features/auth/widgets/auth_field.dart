@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:x/common/size/padding.dart';
+import 'package:x/common/size/ruler.dart';
 import 'package:x/theme/pallete.dart';
 
 class AuthField extends StatelessWidget {

@@ -48,7 +48,7 @@ class _SignUpViewState extends ConsumerState<SignUpView> {
         body: isLoading  ? const LoadingWidget() :Center(
           child: SingleChildScrollView(
             child: Padding(
-              padding: PaddingConstant.paddingHorinzontal25,
+              padding: PaddingConstant.paddingHorizontal25,
               child: Column(
                 children: [
                   AuthField(
