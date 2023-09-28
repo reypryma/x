@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:x/constants/constants.dart';
+import 'package:x/features/tweet/view/create_tweet_view.dart';
 import 'package:x/theme/theme.dart';
 
 class HomeView extends StatefulWidget {
@@ -23,6 +24,10 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
+  onCreateTweet(){
+    Navigator.push(context, CreateTweetView.route());
+  }
+
   BottomNavigationBarItem bottomNavigationBarItem(bool isSelected,
       {required String filledIcon, required String outlineIcon}) {
     return BottomNavigationBarItem(
@@ -41,7 +46,7 @@ class _HomeViewState extends State<HomeView> {
         children: UIConstants.bottomTabBarPages,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: (){},
+        onPressed: onCreateTweet,
         child: const Icon(
           Icons.add,
           color: Pallete.whiteColor,
@@ -54,13 +59,6 @@ class _HomeViewState extends State<HomeView> {
         currentIndex: _page,
         backgroundColor: Pallete.backgroundColor,
         items: [
-          // BottomNavigationBarItem(
-          //   icon: SvgPicture.asset(
-          //     AssetsConstants.homeFilledIcon,
-          //     colorFilter:
-          //         const ColorFilter.mode(Pallete.whiteColor, BlendMode.srcIn),
-          //   ),
-          // ),
           bottomNavigationBarItem(_page == 0, filledIcon: AssetsConstants.homeFilledIcon, outlineIcon: AssetsConstants.homeOutlinedIcon),
           bottomNavigationBarItem(false, filledIcon: AssetsConstants.searchIcon, outlineIcon: AssetsConstants.searchIcon,),
           bottomNavigationBarItem(_page == 2, filledIcon: AssetsConstants.notifFilledIcon, outlineIcon: AssetsConstants.notifOutlinedIcon,),

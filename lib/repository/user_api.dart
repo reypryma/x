@@ -13,11 +13,17 @@ final userAPIProvider = Provider((ref) {
 
 abstract class UserAPIInterface {
   FutureEitherVoid saveUserData(UserModel userModel);
+
   Future<Document> getUserData(String uid);
+
   Future<List<Document>> searchUserByName(String name);
+
   FutureEitherVoid updateUserData(User userModel);
+
   Stream<RealtimeMessage> getLatestUserProfileData();
+
   FutureEitherVoid followUser(User user);
+
   FutureEitherVoid addToFollowing(User user);
 }
 
@@ -45,9 +51,12 @@ class UserAPI extends UserAPIInterface {
   }
 
   @override
-  Future<Document> getUserData(String uid) {
-    // TODO: implement getUserData
-    throw UnimplementedError();
+  Future<Document> getUserData(String uid) async {
+    print('got the getUserData in API: $uid');
+    return await _db.getDocument(
+        databaseId: AppwriteConstants.databaseId,
+        collectionId: AppwriteConstants.usersCollection,
+        documentId: uid);
   }
 
   @override

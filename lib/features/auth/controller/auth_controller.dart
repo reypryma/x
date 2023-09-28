@@ -23,12 +23,13 @@ final currentUserProvider = FutureProvider((ref) {
 });
 
 final currentUserDetailsProvider = FutureProvider((ref) {
-  final currentUserId = ref.watch(currentUserProvider).value!.$id;
-  final userDetails = ref.watch(userDetailsProvider(currentUserId));
+  final currentUser = ref.watch(currentUserProvider).value;
+  print("currentUserDetailsProvider: ${currentUser?.email}  id: ${currentUser?.$id}");
+  final userDetails = ref.watch(userDetailsProvider(currentUser!.$id));
   return userDetails.value;
 });
 
-final userDetailsProvider = FutureProvider.family((ref, String uid) async {
+final userDetailsProvider = FutureProvider.family((ref, String uid) {
   final authController = ref.watch(authControllerProvider.notifier);
   return authController.getUserData(uid);
 });
