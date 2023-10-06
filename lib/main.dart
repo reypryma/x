@@ -7,6 +7,8 @@ import 'package:x/features/auth/view/signup_view.dart';
 import 'package:x/features/home/view/home_view.dart';
 import 'package:x/theme/theme.dart';
 
+import 'features/auth/view/login_view.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await setUpDependencies();
@@ -21,13 +23,13 @@ class MyApp extends ConsumerWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: AppTheme.theme,
-      home: ref.watch(currentUserProvider).when(
+      home: ref.watch(currentUserAccountProvider).when(
           data: (user) {
             print("get current user in first $user");
             if (user != null) {
               return const HomeView();
             }
-            return const SignUpView();
+            return const LoginView();
           },
           error: (error, st) {
             // ref.read(authControllerProvider.notifier).logout(context);

@@ -7,11 +7,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:x/common/common.dart';
 import 'package:x/constants/constants.dart';
 import 'package:x/features/auth/controller/auth_controller.dart';
+import 'package:x/features/tweet/controller/tweet_controller.dart';
+import 'package:x/model/user.dart';
 import 'package:x/theme/pallete.dart';
 
 class CreateTweetView extends ConsumerStatefulWidget {
   static route() => MaterialPageRoute(
-        builder: (context) => const CreateTweetView(),
+        builder: (context) => CreateTweetView(),
       );
 
   const CreateTweetView({
@@ -38,13 +40,21 @@ class _CreateTweetViewState extends ConsumerState<CreateTweetView> {
     tweetTextController.dispose();
   }
 
+  void shareTweet() {
+    ref.read(tweetControllerProvider.notifier).shareTweet(
+      images: images,
+      text: tweetTextController.text,
+      context: context,
+      repliedTo: '',
+      repliedToUserId: '',
+    );
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final currentUser = ref.watch(currentUserDetailsProvider).value;
-
-    Widget showLoadingDialog() {
-      return const LoadingWidget();
-    }
+    UserModel? currentUser = ref.watch(currentUserDetailsProvider).value;
+    bool isLoading = ref.watch(tweetControllerProvider);
 
     Widget showAttachmentOption(
         {VoidCallback? onTap, required String assetName}) {
@@ -75,15 +85,15 @@ class _CreateTweetViewState extends ConsumerState<CreateTweetView> {
         ),
         actions: [
           RoundedSmallButton(
-            onTap: () {},
+            onTap: shareTweet,
             label: 'Tweet',
             backgroundColor: Pallete.blueColor,
             textColor: Pallete.whiteColor,
           ),
         ],
       ),
-      body: currentUser == null
-          ? showLoadingDialog()
+      body: currentUser == null || isLoading
+          ? LoadingWidget()
           : SafeArea(
               child: SingleChildScrollView(
               child: Column(
@@ -119,12 +129,16 @@ class _CreateTweetViewState extends ConsumerState<CreateTweetView> {
                           return Container(
                             width: MediaQuery.of(context).size.width,
                             margin: MarginConstant.marginHorizontal5,
-                            child: Image.file(e, fit: BoxFit.cover,),
+                            child: Image.file(
+                              e,
+                              fit: BoxFit.cover,
+                            ),
                           );
                         }).toList(),
                         options: CarouselOptions(
                             enlargeCenterPage: true,
-                            height: 400, enableInfiniteScroll: false))
+                            height: 400,
+                            enableInfiniteScroll: false))
                 ],
               ),
             )),

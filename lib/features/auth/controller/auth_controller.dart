@@ -17,17 +17,19 @@ final authControllerProvider =
   );
 });
 
-final currentUserProvider = FutureProvider((ref) {
+final currentUserAccountProvider = FutureProvider((ref) {
   final authController = ref.watch(authControllerProvider.notifier);
+  print("currentUserAccountProvider: ### Gettt");
+  // print("currentUserProvider: ${authController.currentUser().email}  id: ${authController.currentUser().$id}");
   return authController.currentUser();
 });
 
 final currentUserDetailsProvider = FutureProvider((ref) {
-  final currentUser = ref.watch(currentUserProvider).value;
-  print("currentUserDetailsProvider: ${currentUser?.email}  id: ${currentUser?.$id}");
-  final userDetails = ref.watch(userDetailsProvider(currentUser!.$id));
+  final currentUserId = ref.watch(currentUserAccountProvider).value!.$id;
+  final userDetails = ref.watch(userDetailsProvider(currentUserId));
   return userDetails.value;
 });
+
 
 final userDetailsProvider = FutureProvider.family((ref, String uid) {
   final authController = ref.watch(authControllerProvider.notifier);
