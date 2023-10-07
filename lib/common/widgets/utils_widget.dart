@@ -34,4 +34,3 @@ Future<File?> pickImage() async {
   }
   return null;
 }
-

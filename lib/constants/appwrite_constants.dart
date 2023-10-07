@@ -10,6 +10,6 @@ class AppwriteConstants {
 
   static const String imagesBucket = '651bcd0da2a1ab69d846';
 
-  static String imageUrl(String imageId) =>
-      '$endPointWeb/storage/buckets/$imagesBucket/files/$imageId/view?project=$projectId&mode=admin';
+  static String imageUrl(String imageId, String endpoint) =>
+      '$endpoint/storage/buckets/$imagesBucket/files/$imageId/view?project=$projectId&mode=admin';
 }

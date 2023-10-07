@@ -1,6 +1,6 @@
 import 'dart:io';
-
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -93,7 +93,7 @@ class _CreateTweetViewState extends ConsumerState<CreateTweetView> {
         ],
       ),
       body: currentUser == null || isLoading
-          ? LoadingWidget()
+          ? const LoadingWidget()
           : SafeArea(
               child: SingleChildScrollView(
               child: Column(
@@ -124,14 +124,16 @@ class _CreateTweetViewState extends ConsumerState<CreateTweetView> {
                     ],
                   ),
                   if (images.isNotEmpty)
-                    CarouselSlider(
+                    if (kIsWeb)
+                      CarouselSlider(
                         items: images.map((e) {
+                          print('using web access ${e.path}');
                           return Container(
                             width: MediaQuery.of(context).size.width,
                             margin: MarginConstant.marginHorizontal5,
-                            child: Image.file(
-                              e,
-                              fit: BoxFit.cover,
+                            child: Image.network(
+                              e.path,
+                              fit: BoxFit.scaleDown,
                             ),
                           );
                         }).toList(),
@@ -139,6 +141,22 @@ class _CreateTweetViewState extends ConsumerState<CreateTweetView> {
                             enlargeCenterPage: true,
                             height: 400,
                             enableInfiniteScroll: false))
+                    else
+                      CarouselSlider(
+                          items: images.map((e) {
+                            return Container(
+                              width: MediaQuery.of(context).size.width,
+                              margin: MarginConstant.marginHorizontal5,
+                              child: Image.file(
+                                e,
+                                fit: BoxFit.cover,
+                              ),
+                            );
+                          }).toList(),
+                          options: CarouselOptions(
+                              enlargeCenterPage: true,
+                              height: 400,
+                              enableInfiniteScroll: false))
                 ],
               ),
             )),

@@ -87,11 +87,11 @@ class TweetAPI implements TweetAPIInterface {
     } on AppwriteException catch (e, st) {
       return left(
         Failure(
-          message: e.message ?? 'Some unexpected error occurred', stackTrace: st,
+          message: "shareTweet in tweetApi error ${e.message}" ?? 'Some unexpected error occurred', stackTrace: st,
         ),
       );
     } catch (e, st) {
-      return left(Failure(message: e.toString(), stackTrace: st));
+      return left(Failure(message: "shareTweet in tweetApi $e", stackTrace: st));
     }
   }
 
