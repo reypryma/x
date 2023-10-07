@@ -97,6 +97,7 @@ class TweetController extends StateNotifier<bool> {
     final res = await _tweetAPI.shareTweet(tweet);
 
     res.fold((l) => showSnackBar(context, l.message), (r) {
+      showSnackBar(context, "Success Create tweet");
       if (repliedToUserId.isNotEmpty) {}
     });
     state = false;

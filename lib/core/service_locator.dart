@@ -14,6 +14,14 @@ Future setUpDependencies() async {
 
 final appWriteService = injector.get<AppwriteServiceContract>();
 
+final isWebProvider = Provider<String>((ref) {
+  var endpoint = AppwriteConstants.endPointMobile;
+  if(kIsWeb){
+    endpoint = AppwriteConstants.endPointWeb;
+  }
+  return endpoint;
+});
+
 final appWriteClientProvider = Provider((ref){
   var endpoint = AppwriteConstants.endPointMobile;
   if(kIsWeb){
