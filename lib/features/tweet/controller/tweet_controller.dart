@@ -39,6 +39,18 @@ class TweetController extends StateNotifier<bool> {
         _notificationController = notificationController,
         super(false);
 
+  Future<List<Tweet>> getTweets() async {
+      final tweetList = await _tweetAPI.getTweets();
+      return tweetList.map((tweet) => Tweet.fromMap(tweet.data)).toList();
+  }
+
+  Future<Tweet> getTweetById(String id) async {
+    final tweet = await _tweetAPI.getTweetById(id);
+    return Tweet.fromMap(tweet.data);
+  }
+
+
+
   void shareTweet({
     required List<File> images,
     required String text,

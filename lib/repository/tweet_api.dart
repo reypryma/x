@@ -45,15 +45,24 @@ class TweetAPI implements TweetAPIInterface {
   }
 
   @override
-  Future<Document> getTweetById(String id) {
-    // TODO: implement getTweetById
-    throw UnimplementedError();
+  Future<Document> getTweetById(String id) async {
+    return await _db.getDocument(
+      databaseId: AppwriteConstants.databaseId,
+      collectionId: AppwriteConstants.tweetsCollection,
+      documentId: id,
+    );
   }
 
   @override
-  Future<List<Document>> getTweets() {
-    // TODO: implement getTweets
-    throw UnimplementedError();
+  Future<List<Document>> getTweets() async {
+    final documents = await _db.listDocuments(
+      databaseId: AppwriteConstants.databaseId,
+      collectionId: AppwriteConstants.tweetsCollection,
+      queries: [
+        Query.orderDesc('tweetedAt'),
+      ],
+    );
+    return documents.documents;
   }
 
   @override
