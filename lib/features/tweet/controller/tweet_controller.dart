@@ -23,6 +23,23 @@ final tweetControllerProvider = StateNotifierProvider<TweetController, bool>(
   },
 );
 
+final getTweetsProvider = FutureProvider((ref) {
+  final tweetController = ref.watch(tweetControllerProvider.notifier);
+  return tweetController.getTweets();
+});
+
+final getLatestTweetProvider = StreamProvider((ref) {
+  final tweetAPI = ref.watch(tweetAPIProvider);
+  print("getLatestTweetProvider" + tweetAPI.getLatestTweet().toList().toString());
+  return tweetAPI.getLatestTweet();
+});
+
+final getTweetByIdProvider = FutureProvider.family((ref, String id) async {
+  final tweetController = ref.watch(tweetControllerProvider.notifier);
+  return tweetController.getTweetById(id);
+});
+
+
 class TweetController extends StateNotifier<bool> {
   final TweetAPI _tweetAPI;
   final StorageAPI _storageAPI;
@@ -40,8 +57,13 @@ class TweetController extends StateNotifier<bool> {
         super(false);
 
   Future<List<Tweet>> getTweets() async {
-      final tweetList = await _tweetAPI.getTweets();
-      return tweetList.map((tweet) => Tweet.fromMap(tweet.data)).toList();
+      try {
+        final tweetList = await _tweetAPI.getTweets();
+        return tweetList.map((tweet) => Tweet.fromMap(tweet.data)).toList();
+      } catch (e) {
+        print("Stack get tweets error" + e.toString());
+        rethrow;
+      }
   }
 
   Future<Tweet> getTweetById(String id) async {

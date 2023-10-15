@@ -34,8 +34,9 @@ class TweetAPI implements TweetAPIInterface {
 
   @override
   Stream<RealtimeMessage> getLatestTweet() {
-    // TODO: implement getLatestTweet
-    throw UnimplementedError();
+    return _realtime.subscribe([
+      'databases.${AppwriteConstants.databaseId}.collections.${AppwriteConstants.tweetsCollection}.documents'
+    ]).stream;
   }
 
   @override
@@ -72,9 +73,15 @@ class TweetAPI implements TweetAPIInterface {
   }
 
   @override
-  Future<List<Document>> getUserTweets(String uid) {
-    // TODO: implement getUserTweets
-    throw UnimplementedError();
+  Future<List<Document>> getUserTweets(String uid) async {
+    final documents = await _db.listDocuments(
+      databaseId: AppwriteConstants.databaseId,
+      collectionId: AppwriteConstants.tweetsCollection,
+      queries: [
+        Query.equal('uid', uid),
+      ],
+    );
+    return documents.documents;
   }
 
   @override
