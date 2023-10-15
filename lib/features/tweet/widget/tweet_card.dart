@@ -3,11 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:x/common/common.dart';
 import 'package:x/constants/constants.dart';
+import 'package:x/core/core.dart';
 import 'package:x/features/auth/controller/auth_controller.dart';
 import 'package:x/features/tweet/controller/tweet_controller.dart';
 import 'package:x/model/tweet.dart';
 import 'package:x/theme/pallete.dart';
 import 'package:timeago/timeago.dart' as timeago;
+
+import 'carousel_image.dart';
+import 'hashtag_text.dart';
 
 class TweetCard extends ConsumerWidget {
   final Tweet tweet;
@@ -137,6 +141,9 @@ class TweetCard extends ConsumerWidget {
                                       ),
                                       loading: () => const SizedBox(),
                                     ),
+                                  HashtagText(text: tweet.text),
+                                  if (tweet.tweetType == TweetType.image)
+                                    CarouselImage(imageLinks: tweet.imageLinks),
                             ]))
                       ],
                     )
