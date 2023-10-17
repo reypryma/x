@@ -1,3 +1,4 @@
+import 'package:any_link_preview/any_link_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -50,101 +51,114 @@ class TweetCard extends ConsumerWidget {
                             child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                              if (tweet.retweetedBy.isNotEmpty)
-                                Row(
-                                  children: [
-                                    SvgPicture.asset(
-                                      AssetsConstants.retweetIcon,
-                                      color: Pallete.greyColor,
-                                      height: 20,
+                                  if (tweet.retweetedBy.isNotEmpty)
+                                    Row(
+                                      children: [
+                                        SvgPicture.asset(
+                                          AssetsConstants.retweetIcon,
+                                          color: Pallete.greyColor,
+                                          height: 20,
+                                        ),
+                                        const SizedBox(width: 2),
+                                        Text(
+                                          '${tweet.retweetedBy} retweeted',
+                                          style: const TextStyle(
+                                            color: Pallete.greyColor,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    const SizedBox(width: 2),
-                                    Text(
-                                      '${tweet.retweetedBy} retweeted',
-                                      style: const TextStyle(
-                                        color: Pallete.greyColor,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
+                                  Row(
+                                    children: [
+                                      Container(
+                                        margin: EdgeInsets.only(
+                                          right: user.isTwitterBlue ? 1 : 5,
+                                        ),
+                                        child: Text(
+                                          user.name,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 19,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              Row(
-                                children: [
-                                  Container(
-                                    margin: EdgeInsets.only(
-                                      right: user.isTwitterBlue ? 1 : 5,
-                                    ),
-                                    child: Text(
-                                      user.name,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 19,
+                                      if (user.isTwitterBlue)
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(right: 5.0),
+                                          child: SvgPicture.asset(
+                                            AssetsConstants.verifiedIcon,
+                                          ),
+                                        ),
+                                      Text(
+                                        '@${user.name} · ${timeago.format(
+                                          tweet.tweetedAt,
+                                          locale: 'en_short',
+                                        )}',
+                                        style: const TextStyle(
+                                          color: Pallete.greyColor,
+                                          fontSize: 17,
+                                        ),
                                       ),
-                                    ),
+                                    ],
                                   ),
-                                  if (user.isTwitterBlue)
-                                    Padding(
-                                      padding:
-                                          const EdgeInsets.only(right: 5.0),
-                                      child: SvgPicture.asset(
-                                        AssetsConstants.verifiedIcon,
-                                      ),
-                                    ),
-                                  Text(
-                                    '@${user.name} · ${timeago.format(
-                                      tweet.tweetedAt,
-                                      locale: 'en_short',
-                                    )}',
-                                    style: const TextStyle(
-                                      color: Pallete.greyColor,
-                                      fontSize: 17,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              if (tweet.repliedTo.isNotEmpty)
-                                ref
-                                    .watch(
-                                        getTweetByIdProvider(tweet.repliedTo))
-                                    .when(
-                                      data: (repliedToTweet) {
-                                        final replyingToUser = ref
-                                            .watch(
-                                              userDetailsProvider(
-                                                repliedToTweet.uid,
-                                              ),
-                                            )
-                                            .value;
-                                        return RichText(
-                                          text: TextSpan(
-                                            text: 'Replying to',
-                                            style: const TextStyle(
-                                              color: Pallete.greyColor,
-                                              fontSize: 16,
-                                            ),
-                                            children: [
-                                              TextSpan(
-                                                text:
-                                                    ' @${replyingToUser?.name}',
+                                  if (tweet.repliedTo.isNotEmpty)
+                                    ref
+                                        .watch(
+                                            getTweetByIdProvider(tweet.repliedTo))
+                                        .when(
+                                          data: (repliedToTweet) {
+                                            final replyingToUser = ref
+                                                .watch(
+                                                  userDetailsProvider(
+                                                    repliedToTweet.uid,
+                                                  ),
+                                                )
+                                                .value;
+                                            return RichText(
+                                              text: TextSpan(
+                                                text: 'Replying to',
                                                 style: const TextStyle(
-                                                  color: Pallete.blueColor,
+                                                  color: Pallete.greyColor,
                                                   fontSize: 16,
                                                 ),
+                                                children: [
+                                                  TextSpan(
+                                                    text:
+                                                        ' @${replyingToUser?.name}',
+                                                    style: const TextStyle(
+                                                      color: Pallete.blueColor,
+                                                      fontSize: 16,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                            ],
+                                            );
+                                          },
+                                          error: (error, st) => ErrorText(
+                                            error: error.toString(),
                                           ),
-                                        );
-                                      },
-                                      error: (error, st) => ErrorText(
-                                        error: error.toString(),
-                                      ),
-                                      loading: () => const SizedBox(),
-                                    ),
+                                          loading: () => const SizedBox(),
+                                        ),
                                   HashtagText(text: tweet.text),
                                   if (tweet.tweetType == TweetType.image)
                                     CarouselImage(imageLinks: tweet.imageLinks),
-                            ]))
+                                  if (tweet.link.isNotEmpty)
+                                    ...[
+                                      const SizedBox(height: 4),
+                                      AnyLinkPreview(
+                                        displayDirection:
+                                        UIDirection.uiDirectionHorizontal,
+                                        link: 'https://${tweet.link}',
+                                      ),
+                                    ],
+                                  // @TODO: Create LIKE SHARE RETWEET
+                                  const Divider(color: Pallete.greyColor),
+                                ]
+                            )
+                        )
                       ],
                     )
                   ],
