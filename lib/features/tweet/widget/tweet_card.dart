@@ -2,11 +2,13 @@ import 'package:any_link_preview/any_link_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:like_button/like_button.dart';
 import 'package:x/common/common.dart';
 import 'package:x/constants/constants.dart';
 import 'package:x/core/core.dart';
 import 'package:x/features/auth/controller/auth_controller.dart';
 import 'package:x/features/tweet/controller/tweet_controller.dart';
+import 'package:x/features/tweet/widget/tweet_icon_button.dart';
 import 'package:x/model/tweet.dart';
 import 'package:x/theme/pallete.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -154,6 +156,83 @@ class TweetCard extends ConsumerWidget {
                                         link: '${tweet.link}',
                                       ),
                                     ],
+                                  Container(
+                                    margin: const EdgeInsets.only(
+                                      top: 10,
+                                      right: 20,
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        TweetIconButton(
+                                          pathName: AssetsConstants.viewsIcon,
+                                          text: (tweet.commentIds.length +
+                                              tweet.reshareCount +
+                                              tweet.likes.length)
+                                              .toString(),
+                                          onTap: () {},
+                                        ),
+                                        TweetIconButton(
+                                          pathName: AssetsConstants.commentIcon,
+                                          text:
+                                          tweet.commentIds.length.toString(),
+                                          onTap: () {},
+                                        ),
+                                        TweetIconButton(
+                                          pathName: AssetsConstants.retweetIcon,
+                                          text: tweet.reshareCount.toString(),
+                                          onTap: () {
+
+                                          },
+                                        ),
+                                        LikeButton(
+                                          size: 25,
+                                          isLiked: tweet.likes
+                                              .contains(currentUser.uid),
+                                          likeBuilder: (isLiked) {
+                                            return isLiked
+                                                ? SvgPicture.asset(
+                                              AssetsConstants
+                                                  .likeFilledIcon,
+                                              color: Pallete.redColor,
+                                            )
+                                                : SvgPicture.asset(
+                                              AssetsConstants
+                                                  .likeOutlinedIcon,
+                                              color: Pallete.greyColor,
+                                            );
+                                          },
+                                          likeCount: tweet.likes.length,
+                                          countBuilder:
+                                              (likeCount, isLiked, text) {
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 2.0),
+                                              child: Text(
+                                                text,
+                                                style: TextStyle(
+                                                  color: isLiked
+                                                      ? Pallete.redColor
+                                                      : Pallete.whiteColor,
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                        IconButton(
+                                          onPressed: () {},
+                                          icon: const Icon(
+                                            Icons.share_outlined,
+                                            size: 25,
+                                            color: Pallete.greyColor,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 1),
                                   // @TODO: Create LIKE SHARE RETWEET
                                   const Divider(color: Pallete.greyColor),
                                 ]
