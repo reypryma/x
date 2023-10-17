@@ -151,7 +151,7 @@ class TweetCard extends ConsumerWidget {
                                       AnyLinkPreview(
                                         displayDirection:
                                         UIDirection.uiDirectionHorizontal,
-                                        link: 'https://${tweet.link}',
+                                        link: '${tweet.link}',
                                       ),
                                     ],
                                   // @TODO: Create LIKE SHARE RETWEET
