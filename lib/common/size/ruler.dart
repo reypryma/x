@@ -10,4 +10,7 @@ class MarginConstant {
   static const marginHorizontal5 = EdgeInsets.symmetric(
     horizontal: 5,
   );
+  static const marginAll8 = EdgeInsets.all(
+    8
+  );
 }

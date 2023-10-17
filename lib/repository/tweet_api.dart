@@ -34,8 +34,9 @@ class TweetAPI implements TweetAPIInterface {
 
   @override
   Stream<RealtimeMessage> getLatestTweet() {
-    // TODO: implement getLatestTweet
-    throw UnimplementedError();
+    return _realtime.subscribe([
+      'databases.${AppwriteConstants.databaseId}.collections.${AppwriteConstants.tweetsCollection}.documents'
+    ]).stream;
   }
 
   @override
@@ -45,15 +46,24 @@ class TweetAPI implements TweetAPIInterface {
   }
 
   @override
-  Future<Document> getTweetById(String id) {
-    // TODO: implement getTweetById
-    throw UnimplementedError();
+  Future<Document> getTweetById(String id) async {
+    return await _db.getDocument(
+      databaseId: AppwriteConstants.databaseId,
+      collectionId: AppwriteConstants.tweetsCollection,
+      documentId: id,
+    );
   }
 
   @override
-  Future<List<Document>> getTweets() {
-    // TODO: implement getTweets
-    throw UnimplementedError();
+  Future<List<Document>> getTweets() async {
+    final documents = await _db.listDocuments(
+      databaseId: AppwriteConstants.databaseId,
+      collectionId: AppwriteConstants.tweetsCollection,
+      queries: [
+        Query.orderDesc('tweetedAt'),
+      ],
+    );
+    return documents.documents;
   }
 
   @override
@@ -63,9 +73,15 @@ class TweetAPI implements TweetAPIInterface {
   }
 
   @override
-  Future<List<Document>> getUserTweets(String uid) {
-    // TODO: implement getUserTweets
-    throw UnimplementedError();
+  Future<List<Document>> getUserTweets(String uid) async {
+    final documents = await _db.listDocuments(
+      databaseId: AppwriteConstants.databaseId,
+      collectionId: AppwriteConstants.tweetsCollection,
+      queries: [
+        Query.equal('uid', uid),
+      ],
+    );
+    return documents.documents;
   }
 
   @override

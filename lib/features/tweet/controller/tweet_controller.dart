@@ -23,6 +23,27 @@ final tweetControllerProvider = StateNotifierProvider<TweetController, bool>(
   },
 );
 
+final getTweetsProvider = FutureProvider((ref) {
+  final tweetController = ref.watch(tweetControllerProvider.notifier);
+  return tweetController.getTweets();
+});
+
+final getLatestTweetProvider = StreamProvider((ref) {
+  final tweetAPI = ref.watch(tweetAPIProvider);
+  print("getLatestTweetProvider" + tweetAPI.getLatestTweet().toList().toString());
+  return tweetAPI.getLatestTweet();
+});
+
+final getTweetByIdProvider = FutureProvider.family((ref, String id) async {
+  final tweetController = ref.watch(tweetControllerProvider.notifier);
+  return tweetController.getTweetById(id);
+});
+
+final getTweetsByHashtagProvider = FutureProvider.family((ref, String hashtag) {
+  final tweetController = ref.watch(tweetControllerProvider.notifier);
+  return tweetController.getTweetsByHashtag(hashtag);
+});
+
 class TweetController extends StateNotifier<bool> {
   final TweetAPI _tweetAPI;
   final StorageAPI _storageAPI;
@@ -38,6 +59,23 @@ class TweetController extends StateNotifier<bool> {
         _storageAPI = storageAPI,
         _notificationController = notificationController,
         super(false);
+
+  Future<List<Tweet>> getTweets() async {
+      try {
+        final tweetList = await _tweetAPI.getTweets();
+        return tweetList.map((tweet) => Tweet.fromMap(tweet.data)).toList();
+      } catch (e) {
+        print("Stack get tweets error" + e.toString());
+        rethrow;
+      }
+  }
+
+  Future<Tweet> getTweetById(String id) async {
+    final tweet = await _tweetAPI.getTweetById(id);
+    return Tweet.fromMap(tweet.data);
+  }
+
+
 
   void shareTweet({
     required List<File> images,
@@ -138,6 +176,11 @@ class TweetController extends StateNotifier<bool> {
       if (repliedToUserId.isNotEmpty) {}
     });
     state = false;
+  }
+
+  Future<List<Tweet>> getTweetsByHashtag(String hashtag) async {
+    final documents = await _tweetAPI.getTweetsByHashtag(hashtag);
+    return documents.map((tweet) => Tweet.fromMap(tweet.data)).toList();
   }
 
   List<String> _getHashtagsFromText(String text) {
