@@ -35,7 +35,8 @@ class _CarouselImageState extends State<CarouselImage> {
                   ))
               .toList(),
           options: CarouselOptions(
-            viewportFraction: 1,
+            // viewportFraction: .75,
+            aspectRatio: 2,
             enableInfiniteScroll: false,
             onPageChanged: (index, reason) {
               setState(() {
@@ -44,23 +45,26 @@ class _CarouselImageState extends State<CarouselImage> {
             },
           ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: widget.imageLinks.asMap().entries.map((e) {
-            return Container(
-              width: 12,
-              height: 12,
-              margin: const EdgeInsets.symmetric(
-                horizontal: 4,
-              ),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withOpacity(
-                  _current == e.key ? 0.9 : 0.4,
+        Positioned(
+          bottom: 0,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: widget.imageLinks.asMap().entries.map((e) {
+              return Container(
+                width: 12,
+                height: 12,
+                margin: const EdgeInsets.symmetric(
+                  horizontal: 4,
                 ),
-              ),
-            );
-          }).toList(),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withOpacity(
+                    _current == e.key ? 0.9 : 0.4,
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
         ),
       ],
     );

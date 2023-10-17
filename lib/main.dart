@@ -27,7 +27,14 @@ class MyApp extends ConsumerWidget {
           data: (user) {
             print("get current user in first $user");
             if (user != null) {
-              return const HomeView();
+              return ref.watch(currentUserDetailsProvider).when(data: (userDetail){
+                return const HomeView();
+              }, error: (error, st) {
+                // ref.read(authControllerProvider.notifier).logout(context);
+                return ErrorPage(
+                  error: error.toString(),
+                );
+              }, loading:  () => const LoadingPage());
             }
             return const LoginView();
           },
