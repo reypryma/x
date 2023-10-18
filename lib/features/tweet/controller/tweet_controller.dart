@@ -3,9 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x/core/core.dart';
+import 'package:x/core/enum/notification_type_enum.dart';
 import 'package:x/features/auth/controller/auth_controller.dart';
 import 'package:x/features/notification/controller/notification_controller.dart';
 import 'package:x/model/tweet.dart';
+import 'package:x/model/user.dart';
 import 'package:x/repository/storage_api.dart';
 import 'package:x/repository/tweet_api.dart';
 
@@ -65,7 +67,7 @@ class TweetController extends StateNotifier<bool> {
         final tweetList = await _tweetAPI.getTweets();
         return tweetList.map((tweet) => Tweet.fromMap(tweet.data)).toList();
       } catch (e) {
-        print("Stack get tweets error" + e.toString());
+        print("Stack get tweets error $e");
         rethrow;
       }
   }
@@ -192,5 +194,26 @@ class TweetController extends StateNotifier<bool> {
           (word) => word.startsWith('https://') || word.startsWith('www.'),
           orElse: () => '',
         );
+  }
+
+  Future likeTweet(Tweet tweet, UserModel user) async {
+    List<String> likes = tweet.likes;
+
+    if (tweet.likes.contains(user.uid)) {
+      likes.remove(user.uid);
+    } else {
+      likes.add(user.uid!);
+    }
+
+    tweet = tweet.copyWith(likes: likes);
+    final res = await _tweetAPI.likeTweet(tweet);
+    res.fold((l) => null, (r) {
+      // _notificationController.createNotification(
+      //   text: '${user.name} liked your tweet!',
+      //   postId: tweet.id,
+      //   notificationType: NotificationType.like,
+      //   uid: tweet.uid,
+      // );
+    });
   }
 }
