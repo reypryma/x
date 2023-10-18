@@ -15,7 +15,7 @@ class TweetListFragment extends ConsumerWidget {
     return ref.watch(currentUserAccountProvider).when(data: (user) {
       return ref.watch(getTweetsProvider).when(
           data: (tweets) {
-            print("View tweets view data1 $tweets");
+            // print("View tweets view data1 $tweets");
             return ref.watch(getLatestTweetProvider).when(
                 data: (data) {
                   if (data.events.contains(

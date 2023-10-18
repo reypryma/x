@@ -25,7 +25,7 @@ class MyApp extends ConsumerWidget {
       theme: AppTheme.theme,
       home: ref.watch(currentUserAccountProvider).when(
           data: (user) {
-            print("get current user in first $user");
+            // print("get current user in first $user");
             if (user != null) {
               return ref.watch(currentUserDetailsProvider).when(data: (userDetail){
                 return const HomeView();

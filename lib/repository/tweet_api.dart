@@ -85,9 +85,27 @@ class TweetAPI implements TweetAPIInterface {
   }
 
   @override
-  FutureEither<Document> likeTweet(Tweet tweet) {
-    // TODO: implement likeTweet
-    throw UnimplementedError();
+  FutureEither<Document> likeTweet(Tweet tweet) async{
+    try {
+      final document = await _db.updateDocument(
+        databaseId: AppwriteConstants.databaseId,
+        collectionId: AppwriteConstants.tweetsCollection,
+        documentId: tweet.id,
+        data: {
+          'likes': tweet.likes,
+        },
+      );
+      return right(document);
+    } on AppwriteException catch (e, st) {
+      print("likes error ${e} ${st}");
+      return left(
+        Failure(
+         message: e.message ?? 'Some unexpected error occurred', stackTrace: st,
+        ),
+      );
+    } catch (e, st) {
+      return left(Failure(message: e.toString(), stackTrace: st));
+    }
   }
 
   @override

@@ -1,6 +1,8 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:x/constants/appwrite_constants.dart';
 import 'package:x/model/notification.dart';
 
 import '../core/core.dart';
@@ -27,9 +29,24 @@ class NotificationAPI implements NotificationAPIInterface {
         _realtime = realtime;
 
   @override
-  FutureEitherVoid createNotification(Notification notification) {
-    // TODO: implement createNotification
-    throw UnimplementedError();
+  FutureEitherVoid createNotification(Notification notification) async {
+    try {
+      await _db.createDocument(
+        databaseId: AppwriteConstants.databaseId,
+        collectionId: AppwriteConstants.notificationsCollection,
+        documentId: ID.unique(),
+        data: notification.toMap(),
+      );
+      return right(null);
+    } on AppwriteException catch (e, st) {
+      return left(
+        Failure(
+          message: e.message ?? 'Some unexpected error occurred', stackTrace: st,
+        ),
+      );
+    } catch (e, st) {
+      return left(Failure(message: e.toString(), stackTrace: st));
+    }
   }
 
   @override
