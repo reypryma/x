@@ -42,14 +42,14 @@ class TweetListFragment extends ConsumerWidget {
                   }
 
                   // print("View tweets view data2}");
-                  return ListView.builder(
+                  return user != null ? ListView.builder(
                     itemCount: tweets.length,
                     itemBuilder: (BuildContext context, int index) {
                       // print("View tweets view data3");
                       final tweet = tweets[index];
                       return TweetCard(tweet: tweet);
                     },
-                  );
+                  ) : SizedBox();
                 },
                 error: (error, stackTrace) => ErrorText(
                       error: "$error $stackTrace",
