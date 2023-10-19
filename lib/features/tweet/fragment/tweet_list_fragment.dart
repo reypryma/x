@@ -12,6 +12,8 @@ class TweetListFragment extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final currentUser = ref.watch(currentUserDetailsProvider).value;
+
     return ref.watch(currentUserAccountProvider).when(data: (user) {
       return ref.watch(getTweetsProvider).when(
           data: (tweets) {
@@ -25,11 +27,16 @@ class TweetListFragment extends ConsumerWidget {
                   } else if (data.events.contains(
                     'databases.*.collections.${AppwriteConstants.tweetsCollection}.documents.*.update',
                   )) {
+                    print("data events: " + data.events[0]);
                     final startingPoint =
                         data.events[0].lastIndexOf('documents.');
                     final endPoint = data.events[0].lastIndexOf('.update');
+
+                    print("starting point $startingPoint endpoint $endPoint");
+
                     final tweetId =
                         data.events[0].substring(startingPoint + 10, endPoint);
+                    print('get tweet id $tweetId');
 
                     var tweet =
                         tweets.where((element) => element.id == tweetId).first;
@@ -39,6 +46,14 @@ class TweetListFragment extends ConsumerWidget {
 
                     tweet = Tweet.fromMap(data.payload);
                     tweets.insert(tweetIndex, tweet);
+                  } else {
+                    print('dataevents1');
+                    print("data events: " + data.events[0]);
+                    final startingPoint =
+                    data.events[0].lastIndexOf('documents.');
+                    final endPoint = data.events[0].lastIndexOf('.update');
+
+                    print("starting point $startingPoint endpoint $endPoint");
                   }
 
                   // print("View tweets view data2}");
@@ -55,7 +70,7 @@ class TweetListFragment extends ConsumerWidget {
                       error: "$error $stackTrace",
                     ),
                 loading: () {
-                  return ListView.builder(
+                  return currentUser == null ? SizedBox() : ListView.builder(
                     itemCount: tweets.length,
                     itemBuilder: (BuildContext context, int index) {
                       final tweet = tweets[index];
