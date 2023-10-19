@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:appwrite/appwrite.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x/core/core.dart';
@@ -215,5 +216,43 @@ class TweetController extends StateNotifier<bool> {
       //   uid: tweet.uid,
       // );
     });
+  }
+
+  void reshareTweet(
+      Tweet tweet,
+      UserModel currentUser,
+      BuildContext context,
+      ) async {
+    tweet = tweet.copyWith(
+      retweetedBy: currentUser.name,
+      likes: [],
+      commentIds: [],
+      reshareCount: tweet.reshareCount + 1,
+    );
+
+    final res = await _tweetAPI.updateReShareCount(tweet);
+    res.fold(
+          (l) => showSnackBar(context, l.message),
+          (r) async {
+        tweet = tweet.copyWith(
+          id: ID.unique(),
+          reshareCount: 0,
+          tweetedAt: DateTime.now(),
+        );
+        final res2 = await _tweetAPI.shareTweet(tweet);
+        res2.fold(
+              (l) => showSnackBar(context, l.message),
+              (r) {
+            _notificationController.createNotification(
+              text: '${currentUser.name} reshared your tweet!',
+              postId: tweet.id,
+              notificationType: NotificationType.retweet,
+              uid: tweet.uid,
+            );
+            showSnackBar(context, 'Retweeted!');
+          },
+        );
+      },
+    );
   }
 }

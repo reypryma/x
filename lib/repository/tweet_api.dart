@@ -17,7 +17,7 @@ abstract class TweetAPIInterface {
   Future<List<Document>> getTweets();
   Stream<RealtimeMessage> getLatestTweet();
   FutureEither<Document> likeTweet(Tweet tweet);
-  FutureEither<Document> updateReshareCount(Tweet tweet);
+  FutureEither<Document> updateReShareCount(Tweet tweet);
   Future<List<Document>> getRepliesToTweet(Tweet tweet);
   Future<Document> getTweetById(String id);
   Future<List<Document>> getUserTweets(String uid);
@@ -130,8 +130,26 @@ class TweetAPI implements TweetAPIInterface {
   }
 
   @override
-  FutureEither<Document> updateReshareCount(Tweet tweet) {
-    // TODO: implement updateReshareCount
-    throw UnimplementedError();
+  FutureEither<Document> updateReShareCount(Tweet tweet) async {
+    try {
+      final document = await _db.updateDocument(
+        databaseId: AppwriteConstants.databaseId,
+        collectionId: AppwriteConstants.tweetsCollection,
+        documentId: tweet.id,
+        data: {
+          'reshareCount': tweet.reshareCount,
+        },
+      );
+      return right(document);
+    } on AppwriteException catch (e, st) {
+      return left(
+        Failure(
+          message: e.message ?? 'Some unexpected error occurred',
+          stackTrace: st,
+        ),
+      );
+    } catch (e, st) {
+      return left(Failure(message: e.toString(), stackTrace: st));
+    }
   }
 }

@@ -27,8 +27,10 @@ class MyApp extends ConsumerWidget {
           data: (user) {
             // print("get current user in first $user");
             if (user != null) {
-              return ref.watch(currentUserDetailsProvider).when(data: (userDetail){
-                return const HomeView();
+              return ref.watch(currentUserDetailsProvider).when(data: (userDetail) {
+                if(userDetail != null) {
+                  return HomeView();
+                }
               }, error: (error, st) {
                 // ref.read(authControllerProvider.notifier).logout(context);
                 return ErrorPage(
