@@ -8,7 +8,7 @@ import 'package:x/constants/constants.dart';
 import 'package:x/core/core.dart';
 import 'package:x/features/auth/controller/auth_controller.dart';
 import 'package:x/features/tweet/controller/tweet_controller.dart';
-import 'package:x/features/tweet/view/twitter_reply.dart';
+import 'package:x/features/tweet/view/twitter_reply_view.dart';
 import 'package:x/features/tweet/widget/tweet_icon_button.dart';
 import 'package:x/model/tweet.dart';
 import 'package:x/theme/pallete.dart';
