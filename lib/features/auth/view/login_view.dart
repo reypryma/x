@@ -30,11 +30,12 @@ class _LoginViewState extends ConsumerState<LoginView> {
     super.dispose();
   }
 
-  void onLogin() {
+  Future onLogin() async {
     ref.read(authControllerProvider.notifier).login(
         email: emailController.text,
         password: passwordController.text,
         context: context);
+    ref.read(authControllerProvider.notifier).currentUser();
   }
 
   @override

@@ -80,6 +80,7 @@ class AuthController extends StateNotifier<bool> {
       required BuildContext context}) async {
     state = true;
     final res = await _authAPI.login(email: email, password: password);
+    Future.delayed(const Duration(seconds: 2));
     state = false;
 
     res.fold((l) => showSnackBar(context, l.message), (r) {

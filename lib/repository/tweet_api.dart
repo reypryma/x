@@ -40,9 +40,15 @@ class TweetAPI implements TweetAPIInterface {
   }
 
   @override
-  Future<List<Document>> getRepliesToTweet(Tweet tweet) {
-    // TODO: implement getRepliesToTweet
-    throw UnimplementedError();
+  Future<List<Document>> getRepliesToTweet(Tweet tweet) async {
+    final document = await _db.listDocuments(
+      databaseId: AppwriteConstants.databaseId,
+      collectionId: AppwriteConstants.tweetsCollection,
+      queries: [
+        Query.equal('repliedTo', tweet.id),
+      ],
+    );
+    return document.documents;
   }
 
   @override

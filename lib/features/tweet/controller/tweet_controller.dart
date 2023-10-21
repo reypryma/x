@@ -31,10 +31,10 @@ final getTweetsProvider = FutureProvider((ref) {
   return tweetController.getTweets();
 });
 
-final getLatestTweetProvider = StreamProvider((ref) {
-  final tweetAPI = ref.watch(tweetAPIProvider);
-  print("getLatestTweetProvider" + tweetAPI.getLatestTweet().toList().toString());
-  return tweetAPI.getLatestTweet();
+
+final getRepliesToTweetsProvider = FutureProvider.family((ref, Tweet tweet) {
+  final tweetController = ref.watch(tweetControllerProvider.notifier);
+  return tweetController.getRepliesToTweet(tweet);
 });
 
 final getTweetByIdProvider = FutureProvider.family((ref, String id) async {
@@ -45,6 +45,13 @@ final getTweetByIdProvider = FutureProvider.family((ref, String id) async {
 final getTweetsByHashtagProvider = FutureProvider.family((ref, String hashtag) {
   final tweetController = ref.watch(tweetControllerProvider.notifier);
   return tweetController.getTweetsByHashtag(hashtag);
+});
+
+//family has data type immutable
+final getLatestTweetProvider = StreamProvider((ref) {
+  final tweetAPI = ref.watch(tweetAPIProvider);
+  print("getLatestTweetProvider" + tweetAPI.getLatestTweet().toList().toString());
+  return tweetAPI.getLatestTweet();
 });
 
 class TweetController extends StateNotifier<bool> {
@@ -209,13 +216,18 @@ class TweetController extends StateNotifier<bool> {
     tweet = tweet.copyWith(likes: likes);
     final res = await _tweetAPI.likeTweet(tweet);
     res.fold((l) => null, (r) {
-      // _notificationController.createNotification(
-      //   text: '${user.name} liked your tweet!',
-      //   postId: tweet.id,
-      //   notificationType: NotificationType.like,
-      //   uid: tweet.uid,
-      // );
+      _notificationController.createNotification(
+        text: '${user.name} liked your tweet!',
+        postId: tweet.id,
+        notificationType: NotificationType.like,
+        uid: tweet.uid,
+      );
     });
+  }
+
+  Future<List<Tweet>> getRepliesToTweet(Tweet tweet) async {
+    final documents = await _tweetAPI.getRepliesToTweet(tweet);
+    return documents.map((tweet) => Tweet.fromMap(tweet.data)).toList();
   }
 
   void reshareTweet(

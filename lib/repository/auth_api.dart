@@ -42,7 +42,7 @@ class AuthAPI implements AuthAPIInterface {
   }
 
   @override
-  FutureEither<Session> login(
+  FutureEither<Session> login (
       {required String email, required String password}) async {
     try {
       final session =
