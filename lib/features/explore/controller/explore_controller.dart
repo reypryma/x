@@ -6,7 +6,7 @@ final exploreControllerProvider = StateNotifierProvider((ref) {
   return ExploreController(userAPI: ref.watch(userAPIProvider));
 });
 
-final searchUserProvider = FutureProvider.family((ref, String name) async {
+final searchUserProvider = FutureProvider.family((ref, String name) {
   final exploreController = ref.watch(exploreControllerProvider.notifier);
   return exploreController.searchUser(name);
 });
