@@ -12,28 +12,36 @@ import 'package:x/repository/user_api.dart';
 final authControllerProvider =
     StateNotifierProvider<AuthController, bool>((ref) {
   return AuthController(
-    ref.watch(authApiProvider),
+    ref.watch(authAPIProvider),
     userAPI: ref.watch(userAPIProvider),
   );
 });
 
+// final currentUserAccountProvider = FutureProvider((ref) {
+//   final authController = ref.watch(authControllerProvider.notifier);
+//   print("currentUserAccountProvider: ### Gettt ${authController} it is");
+//
+//   // print("currentUserProvider: ${authController.currentUser().email}  id: ${authController.currentUser().$id}");
+//
+//   // UserModel user = ref.watch(currentUserDetailsProvider);
+//   return authController.currentUser();
+// });
+
 final currentUserAccountProvider = FutureProvider((ref) {
   final authController = ref.watch(authControllerProvider.notifier);
-  print("currentUserAccountProvider: ### Gettt");
-  // print("currentUserProvider: ${authController.currentUser().email}  id: ${authController.currentUser().$id}");
   return authController.currentUser();
+});
+
+final userDetailsProvider = FutureProvider.family((ref, String uid) {
+  final authController = ref.watch(authControllerProvider.notifier);
+  return authController.getUserData(uid);
 });
 
 final currentUserDetailsProvider = FutureProvider((ref) {
   final currentUserId = ref.watch(currentUserAccountProvider).value!.$id;
   final userDetails = ref.watch(userDetailsProvider(currentUserId));
+
   return userDetails.value;
-});
-
-
-final userDetailsProvider = FutureProvider.family((ref, String uid) {
-  final authController = ref.watch(authControllerProvider.notifier);
-  return authController.getUserData(uid);
 });
 
 class AuthController extends StateNotifier<bool> {
@@ -80,7 +88,6 @@ class AuthController extends StateNotifier<bool> {
       required BuildContext context}) async {
     state = true;
     final res = await _authAPI.login(email: email, password: password);
-    Future.delayed(const Duration(seconds: 2));
     state = false;
 
     res.fold((l) => showSnackBar(context, l.message), (r) {
@@ -106,6 +113,7 @@ class AuthController extends StateNotifier<bool> {
 
   Future<UserModel> getUserData(String uid) async {
     final document = await _userAPI.getUserData(uid);
+    print("get user data from auth controller \n ${document.data}");
     final updatedUser = UserModel.fromMap(document.data);
     return updatedUser;
   }

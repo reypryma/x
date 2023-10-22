@@ -35,14 +35,16 @@ class _LoginViewState extends ConsumerState<LoginView> {
         email: emailController.text,
         password: passwordController.text,
         context: context);
-    ref.read(authControllerProvider.notifier).currentUser();
+    // ref.read(authControllerProvider.notifier).currentUser();
   }
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = ref.watch(authControllerProvider);
+
     return Scaffold(
       appBar: appBar,
-      body: ref.watch(authControllerProvider) ? const LoadingWidget() : Center(
+      body: isLoading ? const LoadingWidget() : Center(
         child: SingleChildScrollView(
           child: Padding(
             padding: PaddingConstant.paddingHorizontal25,

@@ -7,8 +7,10 @@ import 'package:x/core/core.dart';
 import 'package:x/core/service_locator.dart';
 
 // read only value
-final authApiProvider =
-    Provider((ref) => AuthAPI(account: ref.watch(appWriteAccountProvider)));
+final authAPIProvider = Provider((ref) {
+  final account = ref.watch(appWriteAccountProvider);
+  return AuthAPI(account: account);
+});
 
 abstract class AuthAPIInterface {
   FutureEither<User> signUp({required String email, required String password});
