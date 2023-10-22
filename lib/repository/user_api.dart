@@ -41,15 +41,45 @@ class UserAPI extends UserAPIInterface {
         _db = db;
 
   @override
-  FutureEitherVoid addToFollowing(UserModel user) {
-    // TODO: implement addToFollowing
-    throw UnimplementedError();
+  FutureEitherVoid addToFollowing(UserModel user) async{
+    try {
+      await _db.updateDocument(
+        databaseId: AppwriteConstants.databaseId,
+        collectionId: AppwriteConstants.usersCollection,
+        documentId: user.uid!,
+        data: {
+          'following': user.following,
+        },
+      );
+      return right(null);
+    } on AppwriteException catch (e, st) {
+      return left(
+        Failure(message: e.message!, stackTrace: st),
+      );
+    } catch (e, st) {
+      return left(Failure(message: e.toString(), stackTrace: st));
+    }
   }
 
   @override
-  FutureEitherVoid followUser(UserModel user) {
-    // TODO: implement followUser
-    throw UnimplementedError();
+  FutureEitherVoid followUser(UserModel user) async{
+    try {
+      await _db.updateDocument(
+        databaseId: AppwriteConstants.databaseId,
+        collectionId: AppwriteConstants.usersCollection,
+        documentId: user.uid!,
+        data: {
+          'followers': user.followers,
+        },
+      );
+      return right(null);
+    } on AppwriteException catch (e, st) {
+      return left(
+        Failure(message: e.message!, stackTrace: st),
+      );
+    } catch (e, st) {
+      return left(Failure(message: e.toString(), stackTrace: st));
+    }
   }
 
   @override
