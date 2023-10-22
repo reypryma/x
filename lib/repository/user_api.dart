@@ -54,7 +54,9 @@ class UserAPI extends UserAPIInterface {
 
   @override
   Stream<RealtimeMessage> getLatestUserProfileData() {
-    throw UnimplementedError();
+    return _realtime.subscribe([
+      'databases.${AppwriteConstants.databaseId}.collections.${AppwriteConstants.usersCollection}.documents'
+    ]).stream;
   }
 
   @override
