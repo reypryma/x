@@ -8,7 +8,10 @@ import 'package:x/core/service_locator.dart';
 import 'package:x/model/user.dart';
 
 final userAPIProvider = Provider((ref) {
-  return UserAPI(db: ref.watch(appwriteDatabaseProvider));
+  return UserAPI(
+    db: ref.watch(appwriteDatabaseProvider),
+    realtime: ref.watch(appwriteRealtimeProvider),
+  );
 });
 
 abstract class UserAPIInterface {
@@ -18,35 +21,39 @@ abstract class UserAPIInterface {
 
   Future<List<Document>> searchUserByName(String name);
 
-  FutureEitherVoid updateUserData(User userModel);
+  FutureEitherVoid updateUserData(UserModel userModel);
 
   Stream<RealtimeMessage> getLatestUserProfileData();
 
-  FutureEitherVoid followUser(User user);
+  FutureEitherVoid followUser(UserModel user);
 
-  FutureEitherVoid addToFollowing(User user);
+  FutureEitherVoid addToFollowing(UserModel user);
 }
 
 class UserAPI extends UserAPIInterface {
   final Databases _db;
+  final Realtime _realtime;
 
-  UserAPI({required Databases db}) : _db = db;
+  UserAPI({
+    required Databases db,
+    required Realtime realtime,
+  })  : _realtime = realtime,
+        _db = db;
 
   @override
-  FutureEitherVoid addToFollowing(User user) {
+  FutureEitherVoid addToFollowing(UserModel user) {
     // TODO: implement addToFollowing
     throw UnimplementedError();
   }
 
   @override
-  FutureEitherVoid followUser(User user) {
+  FutureEitherVoid followUser(UserModel user) {
     // TODO: implement followUser
     throw UnimplementedError();
   }
 
   @override
   Stream<RealtimeMessage> getLatestUserProfileData() {
-    // TODO: implement getLatestUserProfileData
     throw UnimplementedError();
   }
 
@@ -80,14 +87,31 @@ class UserAPI extends UserAPIInterface {
   }
 
   @override
-  Future<List<Document>> searchUserByName(String name) {
-    // TODO: implement searchUserByName
-    throw UnimplementedError();
+  Future<List<Document>> searchUserByName(String name) async {
+      final documents = await _db.listDocuments(databaseId: AppwriteConstants.databaseId, collectionId: AppwriteConstants.usersCollection,
+        queries: [
+          Query.search('name', name),
+        ]
+      );
+      return documents.documents;
   }
 
   @override
-  FutureEitherVoid updateUserData(User userModel) {
-    // TODO: implement updateUserData
-    throw UnimplementedError();
+  FutureEitherVoid updateUserData(UserModel userModel) async{
+    try {
+      await _db.updateDocument(
+        databaseId: AppwriteConstants.databaseId,
+        collectionId: AppwriteConstants.usersCollection,
+        documentId: userModel.uid!,
+        data: userModel.toMap(),
+      );
+      return right(null);
+    } on AppwriteException catch (e, st) {
+      return left(
+        Failure(message: e.message!, stackTrace: st),
+      );
+    } catch (e, st) {
+      return left(Failure(message: e.toString(), stackTrace: st));
+    }
   }
 }
