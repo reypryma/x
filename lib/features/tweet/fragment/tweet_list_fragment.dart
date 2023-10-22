@@ -12,8 +12,9 @@ class TweetListFragment extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
-    return ref.watch(currentUserAccountProvider).when(data: (user) {
+    // UserModel? userData = ref.watch(currentUserDetailsProvider).value;
+    //currentUserAccountProvider
+    return ref.watch(currentUserDetailsProvider).when(data: (user) {
       return ref.watch(getTweetsProvider).when(
           data: (tweets) {
             // print("View tweets view data1 $tweets");

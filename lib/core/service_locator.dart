@@ -14,19 +14,18 @@ Future setUpDependencies() async {
 
 final appWriteService = injector.get<AppwriteServiceContract>();
 
-final isWebProvider = Provider<String>((ref) {
-  var endpoint = AppwriteConstants.endPointMobile;
-  if(kIsWeb){
-    endpoint = AppwriteConstants.endPointWeb;
-  }
-  return endpoint;
-});
-
 final appWriteClientProvider = Provider((ref){
-  var endpoint = AppwriteConstants.endPointMobile;
+  String used = '';
+  String endpoint;
   if(kIsWeb){
     endpoint = AppwriteConstants.endPointWeb;
+    used = "Connect via web";
+  }else{
+    endpoint = AppwriteConstants.endPointMobile;
+    used = "Connect via mobile";
   }
+
+  print("Trying to $used");
 
   return Client()
     .setEndpoint(endpoint)

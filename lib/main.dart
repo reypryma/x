@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x/common/common.dart';
 import 'package:x/core/service_locator.dart';
 import 'package:x/features/auth/controller/auth_controller.dart';
-import 'package:x/features/auth/view/signup_view.dart';
 import 'package:x/features/home/view/home_view.dart';
 import 'package:x/theme/theme.dart';
 
@@ -21,32 +20,20 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Twitter Clone',
       theme: AppTheme.theme,
       home: ref.watch(currentUserAccountProvider).when(
-          data: (user) {
-            // print("get current user in first $user");
-            if (user != null) {
-              return ref.watch(currentUserDetailsProvider).when(data: (userDetail) {
-                if(userDetail != null) {
-                  return HomeView();
-                }
-              }, error: (error, st) {
-                // ref.read(authControllerProvider.notifier).logout(context);
-                return ErrorPage(
-                  error: error.toString(),
-                );
-              }, loading:  () => const LoadingPage());
-            }
-            return const LoginView();
-          },
-          error: (error, st) {
-            // ref.read(authControllerProvider.notifier).logout(context);
-            return ErrorPage(
-              error: error.toString(),
-            );
-          },
-          loading: () => const LoadingPage()),
+        data: (user) {
+          if (user != null) {
+            const HomeView();
+          }
+          return const LoginView();
+        },
+        error: (error, st) => ErrorPage(
+          error: error.toString(),
+        ),
+        loading: () => const LoadingPage(),
+      ),
     );
   }
 }
