@@ -12,9 +12,9 @@ class TweetListFragment extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentUser = ref.watch(currentUserDetailsProvider).value;
+    // final currentUser = ref.watch(currentUserDetailsProvider).value;
 
-    return ref.watch(currentUserAccountProvider).when(data: (user) {
+    return ref.watch(currentUserDetailsProvider).when(data: (user) {
       return ref.watch(getTweetsProvider).when(
           data: (tweets) {
             // print("View tweets view data1 $tweets");
@@ -70,7 +70,7 @@ class TweetListFragment extends ConsumerWidget {
                       error: "$error $stackTrace",
                     ),
                 loading: () {
-                  return currentUser == null ? SizedBox() : ListView.builder(
+                  return ListView.builder(
                     itemCount: tweets.length,
                     itemBuilder: (BuildContext context, int index) {
                       final tweet = tweets[index];
