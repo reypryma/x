@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:x/constants/appwrite_constants.dart';
 import 'package:x/core/core.dart';
-import 'package:x/core/service_locator.dart';
 import 'package:x/model/user.dart';
 
 final userAPIProvider = Provider((ref) {
@@ -14,26 +13,19 @@ final userAPIProvider = Provider((ref) {
   );
 });
 
-abstract class UserAPIInterface {
+abstract class IUserAPI {
   FutureEitherVoid saveUserData(UserModel userModel);
-
   Future<Document> getUserData(String uid);
-
   Future<List<Document>> searchUserByName(String name);
-
   FutureEitherVoid updateUserData(UserModel userModel);
-
   Stream<RealtimeMessage> getLatestUserProfileData();
-
   FutureEitherVoid followUser(UserModel user);
-
   FutureEitherVoid addToFollowing(UserModel user);
 }
 
-class UserAPI extends UserAPIInterface {
+class UserAPI implements IUserAPI {
   final Databases _db;
   final Realtime _realtime;
-
   UserAPI({
     required Databases db,
     required Realtime realtime,
@@ -41,20 +33,21 @@ class UserAPI extends UserAPIInterface {
         _db = db;
 
   @override
-  FutureEitherVoid addToFollowing(UserModel user) async{
+  FutureEitherVoid saveUserData(UserModel userModel) async {
     try {
-      await _db.updateDocument(
+      await _db.createDocument(
         databaseId: AppwriteConstants.databaseId,
         collectionId: AppwriteConstants.usersCollection,
-        documentId: user.uid!,
-        data: {
-          'following': user.following,
-        },
+        documentId: userModel.uid!,
+        data: userModel.toMap(),
       );
       return right(null);
     } on AppwriteException catch (e, st) {
       return left(
-        Failure(message: e.message!, stackTrace: st),
+        Failure(
+          message: e.message ?? 'Some unexpected error occurred',
+          stackTrace: st,
+        ),
       );
     } catch (e, st) {
       return left(Failure(message: e.toString(), stackTrace: st));
@@ -62,20 +55,43 @@ class UserAPI extends UserAPIInterface {
   }
 
   @override
-  FutureEitherVoid followUser(UserModel user) async{
+  Future<Document> getUserData(String uid) {
+    return _db.getDocument(
+      databaseId: AppwriteConstants.databaseId,
+      collectionId: AppwriteConstants.usersCollection,
+      documentId: uid,
+    );
+  }
+
+  @override
+  Future<List<Document>> searchUserByName(String name) async {
+    final documents = await _db.listDocuments(
+      databaseId: AppwriteConstants.databaseId,
+      collectionId: AppwriteConstants.usersCollection,
+      queries: [
+        Query.search('name', name),
+      ],
+    );
+
+    return documents.documents;
+  }
+
+  @override
+  FutureEitherVoid updateUserData(UserModel userModel) async {
     try {
       await _db.updateDocument(
         databaseId: AppwriteConstants.databaseId,
         collectionId: AppwriteConstants.usersCollection,
-        documentId: user.uid!,
-        data: {
-          'followers': user.followers,
-        },
+        documentId: userModel.uid!,
+        data: userModel.toMap(),
       );
       return right(null);
     } on AppwriteException catch (e, st) {
       return left(
-        Failure(message: e.message!, stackTrace: st),
+        Failure(
+          message: e.message ?? 'Some unexpected error occurred',
+          stackTrace: st,
+        ),
       );
     } catch (e, st) {
       return left(Failure(message: e.toString(), stackTrace: st));
@@ -90,28 +106,23 @@ class UserAPI extends UserAPIInterface {
   }
 
   @override
-  Future<Document> getUserData(String uid) async {
-    print('got the getUserData in API: $uid');
-    return await _db.getDocument(
+  FutureEitherVoid followUser(UserModel user) async {
+    try {
+      await _db.updateDocument(
         databaseId: AppwriteConstants.databaseId,
         collectionId: AppwriteConstants.usersCollection,
-        documentId: uid);
-  }
-
-  @override
-  FutureEitherVoid saveUserData(UserModel userModel) async {
-    try {
-      print('got the saved user data ${userModel}');
-      await _db.createDocument(
-          databaseId: AppwriteConstants.databaseId,
-          collectionId: AppwriteConstants.usersCollection,
-          documentId: userModel.uid!,
-          data: userModel.toMap());
+        documentId: user.uid!,
+        data: {
+          'followers': user.followers,
+        },
+      );
       return right(null);
     } on AppwriteException catch (e, st) {
-      print('vailed  create data user $e with ${st.toString()}');
       return left(
-        Failure(message: e.message!, stackTrace: st),
+        Failure(
+          message: e.message ?? 'Some unexpected error occurred',
+          stackTrace: st,
+        ),
       );
     } catch (e, st) {
       return left(Failure(message: e.toString(), stackTrace: st));
@@ -119,28 +130,23 @@ class UserAPI extends UserAPIInterface {
   }
 
   @override
-  Future<List<Document>> searchUserByName(String name) async {
-      final documents = await _db.listDocuments(databaseId: AppwriteConstants.databaseId, collectionId: AppwriteConstants.usersCollection,
-        queries: [
-          Query.search('name', name),
-        ]
-      );
-      return documents.documents;
-  }
-
-  @override
-  FutureEitherVoid updateUserData(UserModel userModel) async{
+  FutureEitherVoid addToFollowing(UserModel user) async {
     try {
       await _db.updateDocument(
         databaseId: AppwriteConstants.databaseId,
         collectionId: AppwriteConstants.usersCollection,
-        documentId: userModel.uid!,
-        data: userModel.toMap(),
+        documentId: user.uid!,
+        data: {
+          'following': user.following,
+        },
       );
       return right(null);
     } on AppwriteException catch (e, st) {
       return left(
-        Failure(message: e.message!, stackTrace: st),
+        Failure(
+          message: e.message ?? 'Some unexpected error occurred',
+          stackTrace: st,
+        ),
       );
     } catch (e, st) {
       return left(Failure(message: e.toString(), stackTrace: st));
