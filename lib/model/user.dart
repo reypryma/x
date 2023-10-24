@@ -9,7 +9,7 @@ class UserModel {
   final List<String> following;
   final String profilePic;
   final String bannerPic;
-  String? uid;
+  String uid;
   final String bio;
   final bool isTwitterBlue;
   UserModel({
@@ -19,7 +19,7 @@ class UserModel {
     required this.following,
     required this.profilePic,
     required this.bannerPic,
-    this.uid,
+    required this.uid,
     required this.bio,
     required this.isTwitterBlue,
   });
@@ -32,7 +32,7 @@ class UserModel {
     List<String>? following,
     String? profilePic,
     String? bannerPic,
-    ValueGetter<String?>? uid,
+    String? uid,
     String? bio,
     bool? isTwitterBlue,
   }) {
@@ -43,7 +43,7 @@ class UserModel {
       following: following ?? this.following,
       profilePic: profilePic ?? this.profilePic,
       bannerPic: bannerPic ?? this.bannerPic,
-      uid: uid != null ? uid() : this.uid,
+      uid: uid ?? this.uid,
       bio: bio ?? this.bio,
       isTwitterBlue: isTwitterBlue ?? this.isTwitterBlue,
     );

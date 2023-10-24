@@ -25,9 +25,10 @@ class MyApp extends ConsumerWidget {
       home: ref.watch(currentUserAccountProvider).when(
         data: (user) {
           if (user != null) {
-            const HomeView();
+            return const HomeView();
+          }else{
+            return const LoginView();
           }
-          return const LoginView();
         },
         error: (error, st) => ErrorPage(
           error: error.toString(),
