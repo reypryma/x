@@ -7,6 +7,7 @@ import 'package:x/features/tweet/controller/tweet_controller.dart';
 import 'package:x/features/tweet/widget/tweet_card.dart';
 import 'package:x/model/tweet.dart';
 
+
 class TweetListFragment extends ConsumerWidget {
   const TweetListFragment({super.key});
 
@@ -14,7 +15,7 @@ class TweetListFragment extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // UserModel? userData = ref.watch(currentUserDetailsProvider).value;
     //currentUserAccountProvider
-    return ref.watch(currentUserDetailsProvider).when(data: (user) {
+
       return ref.watch(getTweetsProvider).when(
           data: (tweets) {
             // print("View tweets view data1 $tweets");
@@ -70,7 +71,7 @@ class TweetListFragment extends ConsumerWidget {
                       error: "$error $stackTrace",
                     ),
                 loading: () {
-                  return user == null ? SizedBox() : ListView.builder(
+                  return ListView.builder(
                     itemCount: tweets.length,
                     itemBuilder: (BuildContext context, int index) {
                       final tweet = tweets[index];
@@ -83,12 +84,5 @@ class TweetListFragment extends ConsumerWidget {
           loading: () {
             return const LoadingWidget();
           });
-    }, error: (Object error, StackTrace stackTrace) {
-      return ErrorText(
-        error: "$error $stackTrace",
-      );
-    }, loading: () {
-      return const LoadingWidget();
-    });
-  }
+    }
 }
