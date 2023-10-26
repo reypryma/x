@@ -28,7 +28,14 @@ final authControllerProvider =
 // });
 
 final currentUserDetailsProvider = FutureProvider((ref) {
-  final currentUserId = ref.watch(currentUserAccountProvider).value!.$id;
+  final userFirstFetch = ref.watch(authControllerProvider.notifier).usermodel;
+  String? currentUserId;
+  if(userFirstFetch != null){
+    currentUserId = userFirstFetch.$id;
+    ref.watch(currentUserAccountProvider).value;
+  }else{
+    currentUserId = ref.watch(currentUserAccountProvider).value!.$id;
+  }
   final userDetails = ref.watch(userDetailsProvider(currentUserId));
   return userDetails.value;
 });
