@@ -5,7 +5,9 @@ import 'package:x/common/common.dart';
 import 'package:x/constants/constants.dart';
 import 'package:x/features/auth/controller/auth_controller.dart';
 import 'package:x/features/profile/controller/profile_controller.dart';
+import 'package:x/features/tweet/controller/tweet_controller.dart';
 import 'package:x/features/tweet/widget/tweet_card.dart';
+import 'package:x/model/tweet.dart';
 import 'package:x/model/user.dart';
 import 'package:x/theme/pallete.dart';
 
@@ -56,9 +58,9 @@ class UserProfileWidget extends ConsumerWidget {
                               color: Pallete.whiteColor,
                             ),
                           )),
-                          child: Text(
+                          child: const Text(
                             "Edit Profile",
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: Pallete.whiteColor,
                             ),
                           ),
@@ -114,7 +116,8 @@ class UserProfileWidget extends ConsumerWidget {
                               text: 'Followers',
                             ),
                             const SizedBox(height: 2),
-                            const Divider(color: Pallete.whiteColor),
+                            const Divider(color: Pallete.redColor, thickness: 20, height: 10),
+                            const SizedBox(height: 20),
                           ],
                         ),
                       ],
@@ -127,12 +130,69 @@ class UserProfileWidget extends ConsumerWidget {
                   data: (tweets) {
                     // can make it realtime by copying code
                     // from twitter_reply_view
-                    return ListView.builder(
-                      itemCount: tweets.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final tweet = tweets[index];
-                        return TweetCard(tweet: tweet);
-                      },
+                    return ref.watch(getLatestTweetProvider).when(
+                      data: (data) {
+                        final latestTweet = Tweet.fromMap(data.payload);
+
+                        bool isTweetAlreadyPresent = false;
+                        for (final tweetModel in tweets) {
+                          if (tweetModel.id == latestTweet.id) {
+                            isTweetAlreadyPresent = true;
+                            break;
+                          }
+                        }
+
+                        if (!isTweetAlreadyPresent) {
+                          if (data.events.contains(
+                            'databases.*.collections.${AppwriteConstants.tweetsCollection}.documents.*.create',
+                          )) {
+                            tweets.insert(0, Tweet.fromMap(data.payload));
+                          } else if (data.events.contains(
+                            'databases.*.collections.${AppwriteConstants.tweetsCollection}.documents.*.update',
+                          )) {
+                            // get id of original tweet
+                            final startingPoint =
+                            data.events[0].lastIndexOf('documents.');
+                            final endPoint =
+                            data.events[0].lastIndexOf('.update');
+                            final tweetId = data.events[0]
+                                .substring(startingPoint + 10, endPoint);
+
+                            var tweet = tweets
+                                .where((element) => element.id == tweetId)
+                                .first;
+
+                            final tweetIndex = tweets.indexOf(tweet);
+                            tweets.removeWhere(
+                                    (element) => element.id == tweetId);
+
+                            tweet = Tweet.fromMap(data.payload);
+                            tweets.insert(tweetIndex, tweet);
+                          }
+                        }
+
+                        return ListView.builder(
+                          itemCount: tweets.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            final tweet = tweets[index];
+                            return TweetCard(tweet: tweet);
+                          },
+                        );
+                      }, error: (Object error, StackTrace stackTrace) {
+                        return ErrorText(
+                          error: error.toString(),
+                        );
+                      }, loading: () {
+                      return Expanded(
+                        child: ListView.builder(
+                          itemCount: tweets.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            final tweet = tweets[index];
+                            return TweetCard(tweet: tweet);
+                          },
+                        ),
+                      );
+                    },
                     );
                   },
                   error: (error, st) => ErrorText(
