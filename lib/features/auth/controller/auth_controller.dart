@@ -27,9 +27,10 @@ final authControllerProvider =
 //   return authController.currentUser();
 // });
 
-final currentUserAccountProvider = FutureProvider((ref) {
-  final authController = ref.watch(authControllerProvider.notifier);
-  return authController.currentUser();
+final currentUserDetailsProvider = FutureProvider((ref) {
+  final currentUserId = ref.watch(currentUserAccountProvider).value!.$id;
+  final userDetails = ref.watch(userDetailsProvider(currentUserId));
+  return userDetails.value;
 });
 
 final userDetailsProvider = FutureProvider.family((ref, String uid) {
@@ -37,16 +38,17 @@ final userDetailsProvider = FutureProvider.family((ref, String uid) {
   return authController.getUserData(uid);
 });
 
-final currentUserDetailsProvider = FutureProvider((ref) {
-  final currentUserId = ref.watch(currentUserAccountProvider).value!.$id;
-  final userDetails = ref.watch(userDetailsProvider(currentUserId));
-
-  return userDetails.value;
+final currentUserAccountProvider = FutureProvider((ref) {
+  final authController = ref.watch(authControllerProvider.notifier);
+  return authController.currentUser();
 });
 
 class AuthController extends StateNotifier<bool> {
   final AuthAPI _authAPI;
   final UserAPI _userAPI;
+
+  User? usermodel;
+
   AuthController({
     required AuthAPI authAPI,
     required UserAPI userAPI,
@@ -97,9 +99,15 @@ class AuthController extends StateNotifier<bool> {
     final res = await _authAPI.login(email: email, password: password);
     state = false;
 
-    res.fold((l) => showSnackBar(context, l.message), (r) {
-      showSnackBar(context, 'Successfully Login');
-      Navigator.push(context, HomeView.route());
+    res.fold((l) => showSnackBar(context, l.message), (r) async {
+      usermodel = await currentUser();
+      if (!context.mounted) return;
+      if(usermodel != null){
+        showSnackBar(context, 'Successfully Login');
+        Navigator.push(context, HomeView.route());
+      }else{
+        showSnackBar(context, 'Failed Login');
+      }
     });
   }
 
