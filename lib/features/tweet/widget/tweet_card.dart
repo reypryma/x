@@ -7,6 +7,7 @@ import 'package:x/common/common.dart';
 import 'package:x/constants/constants.dart';
 import 'package:x/core/core.dart';
 import 'package:x/features/auth/controller/auth_controller.dart';
+import 'package:x/features/profile/view/edit_user_profile.dart';
 import 'package:x/features/tweet/controller/tweet_controller.dart';
 import 'package:x/features/tweet/view/twitter_reply_view.dart';
 import 'package:x/features/tweet/widget/tweet_icon_button.dart';
@@ -47,13 +48,17 @@ class TweetCard extends ConsumerWidget {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            margin: MarginConstant.marginAll8,
-                            child: GestureDetector(
-                              onTap: () {},
-                              child: CircleAvatar(
-                                backgroundImage: NetworkImage(user.profilePic),
-                                radius: 35,
+                          GestureDetector(
+                            child: Container(
+                              margin: MarginConstant.marginAll8,
+                              child: InkWell(
+                                onTap: () {
+
+                                },
+                                child: CircleAvatar(
+                                  backgroundImage: NetworkImage(user.profilePic),
+                                  radius: 35,
+                                ),
                               ),
                             ),
                           ),
