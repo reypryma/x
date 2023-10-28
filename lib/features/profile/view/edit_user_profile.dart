@@ -160,27 +160,43 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
           : Column(
               children: [
                 SizedBox(
-                  height: MediaQuery.of(context).size.width * .3,
+                  height: MediaQuery.of(context).size.width * .15,
                   child: Stack(
                     children: [
                       GestureDetector(
                           onTap: selectBannerImage,
                           child: Container(
                             width: double.infinity,
-                            height: MediaQuery.of(context).size.width * .3 - 50,
+                            height: MediaQuery.of(context).size.width * .1,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: getBannerWidget(user),
                           )),
                       Positioned(
-                          bottom: MediaQuery.of(context).size.width * .3 - 5,
+                          bottom: MediaQuery.of(context).size.width * .05 - 30,
                           left: 20,
                           child: GestureDetector(
                             onTap: selectProfileImage,
                               child: getProfileImageWidget(user))),
                     ],
                   ),
+                ),
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    hintText: 'Name',
+                    contentPadding: EdgeInsets.all(18),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                TextField(
+                  controller: bioController,
+                  decoration: const InputDecoration(
+                    hintText: 'Bio',
+                    contentPadding: EdgeInsets.all(18),
+                  ),
+                  maxLines: 4,
                 ),
               ],
             ),

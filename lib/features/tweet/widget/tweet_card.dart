@@ -48,15 +48,17 @@ class TweetCard extends ConsumerWidget {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            margin: MarginConstant.marginAll8,
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.push(context, EditProfileView.route());
-                              },
-                              child: CircleAvatar(
-                                backgroundImage: NetworkImage(user.profilePic),
-                                radius: 35,
+                          GestureDetector(
+                            child: Container(
+                              margin: MarginConstant.marginAll8,
+                              child: InkWell(
+                                onTap: () {
+
+                                },
+                                child: CircleAvatar(
+                                  backgroundImage: NetworkImage(user.profilePic),
+                                  radius: 35,
+                                ),
                               ),
                             ),
                           ),
