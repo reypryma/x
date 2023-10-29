@@ -104,16 +104,6 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
 
     Widget getProfileImageWidget(UserModel user) {
       if (kIsWeb) {
-        // if (profileFile != null) {
-        //   return Image.network(
-        //     profileFile!.path,
-        //     fit: BoxFit.fitWidth,
-        //   );
-        // } else {
-        //   return Container(
-        //     color: Pallete.blueColor,
-        //   );
-        // }
         return CircleAvatar(
           backgroundImage: NetworkImage(profileFile?.path ?? user.profilePic),
           radius: 40,
@@ -139,7 +129,7 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
         centerTitle: false,
         actions: [
           TextButton(
-              onPressed: () {
+              onPressed: () async {
                 ref
                     .read(userProfileControllerProvider.notifier)
                     .updateUserProfile(
