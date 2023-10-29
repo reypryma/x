@@ -8,6 +8,7 @@ import 'package:x/constants/constants.dart';
 import 'package:x/core/core.dart';
 import 'package:x/features/auth/controller/auth_controller.dart';
 import 'package:x/features/profile/view/edit_user_profile.dart';
+import 'package:x/features/profile/view/user_profile_view.dart';
 import 'package:x/features/tweet/controller/tweet_controller.dart';
 import 'package:x/features/tweet/view/twitter_reply_view.dart';
 import 'package:x/features/tweet/widget/tweet_icon_button.dart';
@@ -53,7 +54,7 @@ class TweetCard extends ConsumerWidget {
                               margin: MarginConstant.marginAll8,
                               child: InkWell(
                                 onTap: () {
-
+                                    Navigator.push(context, UserProfileView.route(user));
                                 },
                                 child: CircleAvatar(
                                   backgroundImage: NetworkImage(user.profilePic),

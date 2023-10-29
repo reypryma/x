@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,19 +9,40 @@ import 'package:x/model/user.dart';
 
 class UserProfileView extends ConsumerWidget {
   static route(UserModel userModel) => MaterialPageRoute(
-        builder: (context) => UserProfileView(user: userModel),
-      );
-
-  final UserModel user;
-
-  const UserProfileView({Key? key, required this.user}) : super(key: key);
+    builder: (context) => UserProfileView(
+      userModel: userModel,
+    ),
+  );
+  final UserModel userModel;
+  const UserProfileView({
+    super.key,
+    required this.userModel,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    UserModel copyOfUser = user;
+    UserModel copyOfUser = userModel;
 
     return Scaffold(
-      body: UserProfileWidget(user: copyOfUser,)
+      body: ref.watch(getLatestUserProfileDataProvider).when(
+        data: (data) {
+          if (data.events.contains(
+            'databases.${AppwriteConstants.databaseId}.collections.${AppwriteConstants.usersCollection}.documents.${copyOfUser.uid}.update',
+          ) || data.events.contains(
+            'databases.${AppwriteConstants.databaseId}.collections.${AppwriteConstants.usersCollection}.documents.${copyOfUser.uid}.create',
+          )
+          ) {
+            copyOfUser = UserModel.fromMap(data.payload);
+          }
+          return UserProfileWidget(user: copyOfUser);
+        },
+        error: (error, st) => ErrorText(
+          error: error.toString(),
+        ),
+        loading: () {
+          return UserProfileWidget(user: copyOfUser);
+        },
+      ),
     );
   }
 }

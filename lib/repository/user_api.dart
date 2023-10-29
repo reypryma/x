@@ -9,7 +9,7 @@ import 'package:x/model/user.dart';
 final userAPIProvider = Provider((ref) {
   return UserAPI(
     db: ref.watch(appwriteDatabaseProvider),
-    realtime: ref.watch(appwriteRealtimeProvider),
+    realtime: ref.watch(appwriteRealtimeProvider2),
   );
 });
 
