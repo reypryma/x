@@ -149,8 +149,14 @@ class TweetController extends StateNotifier<bool> {
     );
     final res = await _tweetAPI.shareTweet(tweet);
 
-    res.fold((l) => showSnackBar(context, l.message), (r) async {
+    res.fold((l) {
+      print("Error _shareImageTweet ${l.stackTrace}");
+      return showSnackBar(context, l.message);
+    }, (r) async {
       showSnackBar(context, "Success Create tweet");
+
+      print("RepliedToUserID ${repliedToUserId.isNotEmpty}");
+
       if (repliedToUserId.isNotEmpty) {
         await _notificationController.createNotification(
           text: '${user.name} replied to your tweet!',
@@ -192,12 +198,19 @@ class TweetController extends StateNotifier<bool> {
 
     final res = await _tweetAPI.shareTweet(tweet);
     res.fold((l) {
-      if (kDebugMode) {
-        print("Error share tweet. ${l.stackTrace}");
+      print("Error _shareTextTweet ${l.stackTrace}");
+      return showSnackBar(context, l.message);
+    }, (r) async {
+      print("RepliedToUserID ${repliedToUserId.isNotEmpty}");
+
+      if (repliedToUserId.isNotEmpty) {
+        await _notificationController.createNotification(
+          text: '${user.name} replied to your tweet!',
+          postId: r.$id,
+          notificationType: NotificationType.reply,
+          uid: repliedToUserId,
+        );
       }
-      showSnackBar(context, l.message);
-    }, (r) {
-      if (repliedToUserId.isNotEmpty) {}
     });
     state = false;
   }
@@ -220,7 +233,7 @@ class TweetController extends StateNotifier<bool> {
 
   Future likeTweet(Tweet tweet, UserModel user) async {
     List<String> likes = tweet.likes;
-    String textLike = user.name;
+    var textLike = "${user.name} ";
 
     if (tweet.likes.contains(user.uid)) {
       likes.remove(user.uid);
@@ -270,7 +283,10 @@ class TweetController extends StateNotifier<bool> {
         );
         final res2 = await _tweetAPI.shareTweet(tweet);
         res2.fold(
-              (l) => showSnackBar(context, l.message),
+              (l) {
+                print("Error reshareTweet ${l.stackTrace}");
+                return showSnackBar(context, l.message);
+              },
               (r) {
             _notificationController.createNotification(
               text: '${currentUser.name} reshared your tweet!',
