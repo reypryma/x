@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:appwrite/appwrite.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:x/core/core.dart';
@@ -50,7 +51,9 @@ final getTweetsByHashtagProvider = FutureProvider.family((ref, String hashtag) {
 //family has data type immutable
 final getLatestTweetProvider = StreamProvider((ref) {
   final tweetAPI = ref.watch(tweetAPIProvider);
-  print("getLatestTweetProvider" + tweetAPI.getLatestTweet().toList().toString());
+  if (kDebugMode) {
+    print("getLatestTweetProvider ${tweetAPI.getLatestTweet().toList()}");
+  }
   return tweetAPI.getLatestTweet();
 });
 
@@ -75,7 +78,9 @@ class TweetController extends StateNotifier<bool> {
         final tweetList = await _tweetAPI.getTweets();
         return tweetList.map((tweet) => Tweet.fromMap(tweet.data)).toList();
       } catch (e) {
-        print("Stack get tweets error $e");
+        if (kDebugMode) {
+          print("Stack get tweets error $e");
+        }
         rethrow;
       }
   }
@@ -132,7 +137,7 @@ class TweetController extends StateNotifier<bool> {
       hashtags: hashtags,
       link: link,
       imageLinks: imageLinks,
-      uid: user.uid!,
+      uid: user.uid,
       tweetType: TweetType.image,
       tweetedAt: DateTime.now(),
       likes: const [],
@@ -144,9 +149,16 @@ class TweetController extends StateNotifier<bool> {
     );
     final res = await _tweetAPI.shareTweet(tweet);
 
-    res.fold((l) => showSnackBar(context, l.message), (r) {
+    res.fold((l) => showSnackBar(context, l.message), (r) async {
       showSnackBar(context, "Success Create tweet");
-      if (repliedToUserId.isNotEmpty) {}
+      if (repliedToUserId.isNotEmpty) {
+        await _notificationController.createNotification(
+          text: '${user.name} replied to your tweet!',
+          postId: r.$id,
+          notificationType: NotificationType.reply,
+          uid: repliedToUserId,
+        );
+      }
     });
     state = false;
   }
@@ -167,7 +179,7 @@ class TweetController extends StateNotifier<bool> {
       hashtags: hashtags,
       link: link,
       imageLinks: const [],
-      uid: user.uid!,
+      uid: user.uid,
       tweetType: TweetType.text,
       tweetedAt: DateTime.now(),
       likes: const [],
@@ -180,7 +192,9 @@ class TweetController extends StateNotifier<bool> {
 
     final res = await _tweetAPI.shareTweet(tweet);
     res.fold((l) {
-      print("Error share tweet. ${l.stackTrace}");
+      if (kDebugMode) {
+        print("Error share tweet. ${l.stackTrace}");
+      }
       showSnackBar(context, l.message);
     }, (r) {
       if (repliedToUserId.isNotEmpty) {}
@@ -210,7 +224,7 @@ class TweetController extends StateNotifier<bool> {
     if (tweet.likes.contains(user.uid)) {
       likes.remove(user.uid);
     } else {
-      likes.add(user.uid!);
+      likes.add(user.uid);
     }
 
     tweet = tweet.copyWith(likes: likes);
