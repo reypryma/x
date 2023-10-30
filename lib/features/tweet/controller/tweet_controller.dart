@@ -220,18 +220,21 @@ class TweetController extends StateNotifier<bool> {
 
   Future likeTweet(Tweet tweet, UserModel user) async {
     List<String> likes = tweet.likes;
+    String textLike = user.name;
 
     if (tweet.likes.contains(user.uid)) {
       likes.remove(user.uid);
+      textLike += "Unlike your tweet";
     } else {
       likes.add(user.uid);
+      textLike += "Like your tweet";
     }
 
     tweet = tweet.copyWith(likes: likes);
     final res = await _tweetAPI.likeTweet(tweet);
     res.fold((l) => null, (r) {
       _notificationController.createNotification(
-        text: '${user.name} liked your tweet!',
+        text: textLike,
         postId: tweet.id,
         notificationType: NotificationType.like,
         uid: tweet.uid,
