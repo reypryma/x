@@ -153,10 +153,7 @@ class TweetController extends StateNotifier<bool> {
       print("Error _shareImageTweet ${l.stackTrace}");
       return showSnackBar(context, l.message);
     }, (r) async {
-      showSnackBar(context, "Success Create tweet");
-
       print("RepliedToUserID ${repliedToUserId.isNotEmpty}");
-
       if (repliedToUserId.isNotEmpty) {
         await _notificationController.createNotification(
           text: '${user.name} replied to your tweet!',

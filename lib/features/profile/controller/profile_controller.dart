@@ -89,13 +89,16 @@ class UserProfileController extends StateNotifier<bool> {
     required BuildContext context,
     required UserModel currentUser,
   }) async {
+    bool isFollowing = false;
     // already following
     if (currentUser.following.contains(user.uid)) {
       user.followers.remove(currentUser.uid);
       currentUser.following.remove(user.uid);
+      isFollowing = false;
     } else {
       user.followers.add(currentUser.uid);
       currentUser.following.add(user.uid);
+      isFollowing = true;
     }
 
     user = user.copyWith(followers: user.followers);
@@ -104,15 +107,22 @@ class UserProfileController extends StateNotifier<bool> {
     );
 
     final res = await _userAPI.followUser(user);
-    res.fold((l) => showSnackBar(context, l.message), (r) async {
+    res.fold((l){
+      print("Error followUser _userAPI.followUser ${l.stackTrace}");
+      showSnackBar(context, l.message);
+    }, (r) async {
       final res2 = await _userAPI.addToFollowing(currentUser);
-      res2.fold((l) => showSnackBar(context, l.message), (r) {
-        // _notificationController.createNotification(
-        //   text: '${currentUser.name} followed you!',
-        //   postId: '',
-        //   notificationType: NotificationType.follow,
-        //   uid: user.uid,
-        // );
+      res2.fold((l) {showSnackBar(context, l.message);}, (r) async {
+        var textFollow = "${currentUser.name} ";
+
+        isFollowing ? textFollow += "Following you" : textFollow += "Unfollow you";
+
+        await _notificationController.createNotification(
+          text: textFollow,
+          postId: '',
+          notificationType: NotificationType.follow,
+          uid: user.uid,
+        );
       });
     });
   }
