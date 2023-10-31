@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:x/common/common.dart';
@@ -96,6 +97,7 @@ class _CreateTweetViewState extends ConsumerState<CreateTweetView> {
           ? const LoadingWidget()
           : SafeArea(
               child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
               child: Column(
                 children: [
                   Row(
