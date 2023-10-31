@@ -73,9 +73,15 @@ class TweetAPI implements TweetAPIInterface {
   }
 
   @override
-  Future<List<Document>> getTweetsByHashtag(String hashtag) {
-    // TODO: implement getTweetsByHashtag
-    throw UnimplementedError();
+  Future<List<Document>> getTweetsByHashtag(String hashtag) async {
+    final documents = await _db.listDocuments(
+      databaseId: AppwriteConstants.databaseId,
+      collectionId: AppwriteConstants.tweetsCollection,
+      queries: [
+        Query.search('hashtags', hashtag),
+      ],
+    );
+    return documents.documents;
   }
 
   @override
@@ -127,7 +133,7 @@ class TweetAPI implements TweetAPIInterface {
     } on AppwriteException catch (e, st) {
       return left(
         Failure(
-          message: "shareTweet in tweetApi error ${e.message}" ?? 'Some unexpected error occurred', stackTrace: st,
+          message: "shareTweet in tweetApi error ${e.message}", stackTrace: st,
         ),
       );
     } catch (e, st) {

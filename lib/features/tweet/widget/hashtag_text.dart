@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:x/features/tweet/view/hashtag_view.dart';
 import 'package:x/theme/theme.dart';
 
 class HashtagText extends StatelessWidget {
@@ -25,10 +26,10 @@ class HashtagText extends StatelessWidget {
             ),
             recognizer: TapGestureRecognizer()
               ..onTap = () {
-                // Navigator.push(
-                //   context,
-                //   HashtagView.route(element),
-                // );
+                Navigator.push(
+                  context,
+                  HashtagView.route(element),
+                );
               },
           ),
         );
