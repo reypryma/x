@@ -10,7 +10,7 @@ import '../core/core.dart';
 final notificationAPIProvider = Provider((ref) {
   return NotificationAPI(
         db: ref.watch(appwriteDatabaseProvider),
-    realtime: ref.watch(appwriteRealtimeProvider),
+    realtime: ref.watch(appwriteRealtimeProvider3),
   );
 });
 
@@ -51,13 +51,20 @@ class NotificationAPI implements NotificationAPIInterface {
 
   @override
   Stream<RealtimeMessage> getLatestNotification() {
-    // TODO: implement getLatestNotification
-    throw UnimplementedError();
+    return _realtime.subscribe([
+      'databases.${AppwriteConstants.databaseId}.collections.${AppwriteConstants.notificationsCollection}.documents'
+    ]).stream;
   }
 
   @override
-  Future<List<Document>> getNotifications(String uid) {
-    // TODO: implement getNotifications
-    throw UnimplementedError();
+  Future<List<Document>> getNotifications(String uid) async {
+    final documents = await _db.listDocuments(
+      databaseId: AppwriteConstants.databaseId,
+      collectionId: AppwriteConstants.notificationsCollection,
+      queries: [
+        Query.equal('uid', uid),
+      ],
+    );
+    return documents.documents;
   }
 }
