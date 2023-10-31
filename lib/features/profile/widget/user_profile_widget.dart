@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -165,16 +166,22 @@ class UserProfileWidget extends ConsumerWidget {
                 } else if (data.events.contains(
                   'databases.*.collections.${AppwriteConstants.tweetsCollection}.documents.*.update',
                 )) {
-                  print("data events: " + data.events[0]);
+                  if (kDebugMode) {
+                    print("data events: ${data.events[0]}");
+                  }
                   final startingPoint =
                   data.events[0].lastIndexOf('documents.');
                   final endPoint = data.events[0].lastIndexOf('.update');
 
-                  print("starting point $startingPoint endpoint $endPoint");
+                  if (kDebugMode) {
+                    print("starting point $startingPoint endpoint $endPoint");
+                  }
 
                   final tweetId =
                   data.events[0].substring(startingPoint + 10, endPoint);
-                  print('get tweet id $tweetId');
+                  if (kDebugMode) {
+                    print('get tweet id $tweetId');
+                  }
 
                   var tweet =
                       tweets.where((element) => element.id == tweetId).first;
@@ -185,13 +192,19 @@ class UserProfileWidget extends ConsumerWidget {
                   tweet = Tweet.fromMap(data.payload);
                   tweets.insert(tweetIndex, tweet);
                 } else {
-                  print('dataevents1');
-                  print("data events: " + data.events[0]);
+                  if (kDebugMode) {
+                    print('dataevents1');
+                  }
+                  if (kDebugMode) {
+                    print("data events: ${data.events[0]}");
+                  }
                   final startingPoint =
                   data.events[0].lastIndexOf('documents.');
                   final endPoint = data.events[0].lastIndexOf('.update');
 
-                  print("starting point $startingPoint endpoint $endPoint");
+                  if (kDebugMode) {
+                    print("starting point $startingPoint endpoint $endPoint");
+                  }
                 }
 
                 // print("View tweets view data2}");
@@ -215,15 +228,6 @@ class UserProfileWidget extends ConsumerWidget {
                   },
                 );
               });
-
-
-          // return ListView.builder(
-          //   itemCount: tweets.length,
-          //   itemBuilder: (BuildContext context, int index) {
-          //     final tweet = tweets[index];
-          //     return TweetCard(tweet: tweet);
-          //   },
-          // );
         },
         error: (error, st) => ErrorText(
           error: error.toString(),
