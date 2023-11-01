@@ -7,7 +7,6 @@ import 'package:x/common/common.dart';
 import 'package:x/constants/constants.dart';
 import 'package:x/core/core.dart';
 import 'package:x/features/auth/controller/auth_controller.dart';
-import 'package:x/features/profile/view/edit_user_profile.dart';
 import 'package:x/features/profile/view/user_profile_view.dart';
 import 'package:x/features/tweet/controller/tweet_controller.dart';
 import 'package:x/features/tweet/view/twitter_reply_view.dart';
@@ -166,7 +165,7 @@ class TweetCard extends ConsumerWidget {
                                   AnyLinkPreview(
                                     displayDirection:
                                         UIDirection.uiDirectionHorizontal,
-                                    link: '${tweet.link}',
+                                    link: tweet.link,
                                   ),
                                 ],
                                 Container(
