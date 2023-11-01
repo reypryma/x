@@ -12,11 +12,18 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build:
+  lint:
+    name: Lint Check
     runs-on: ubuntu-latest
 
     steps:
-      - name: Flutter semantics coverage
-        # You may pin to the exact commit or the version.
-        # uses: kubawich/flutter-sematics-coverage@a2af46be2f6670b352871dd9fb77b1a9cc8e6d31
-        uses: kubawich/flutter-sematics-coverage@1.0.1
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v6
+      with:
+        flutter-version: 2.x  # Adjust to the Flutter version you're using
+
+    - name: Run Linting
+      run: flutter analyze
