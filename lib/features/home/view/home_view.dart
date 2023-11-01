@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:x/constants/constants.dart';
+import 'package:x/features/home/widgets/side_drawer.dart';
 import 'package:x/features/tweet/view/create_tweet_view.dart';
 import 'package:x/theme/theme.dart';
 
@@ -41,6 +42,7 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _page == 0 ? _appBar : null,
+      drawer: const SideDrawer(),
       body: IndexedStack(
         index: _page,
         children: UIConstants.bottomTabBarPages,
