@@ -16,6 +16,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Dart Pull Request Use Case Validator
-        uses: nivisi/dart_pull_request_use_case_validator@0.0.3
+      - name: Flutter Mate
+        # You may pin to the exact commit or the version.
+        # uses: techno-disaster/Flutter-Mate@5a1eb05c542ab8dbda92eec7290f5b79c6371f4e
+        uses: techno-disaster/Flutter-Mate@v1.0.0
 
