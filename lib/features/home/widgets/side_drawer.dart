@@ -49,7 +49,7 @@ class SideDrawer extends ConsumerWidget {
               leading: SvgPicture.asset(
                 AssetsConstants.twitterLogo,
                 height: 30,
-                color: Colors.white,
+                colorFilter: const ColorFilter.mode(Pallete.whiteColor, BlendMode.srcIn),
               ),
               title: const Text(
                 'Twitter Blue',
