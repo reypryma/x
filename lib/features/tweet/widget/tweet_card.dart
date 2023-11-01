@@ -71,7 +71,7 @@ class TweetCard extends ConsumerWidget {
                                     children: [
                                       SvgPicture.asset(
                                         AssetsConstants.retweetIcon,
-                                        color: Pallete.greyColor,
+                                        colorFilter: const ColorFilter.mode(Pallete.greyColor, BlendMode.srcIn),
                                         height: 20,
                                       ),
                                       const SizedBox(width: 2),
@@ -219,12 +219,12 @@ class TweetCard extends ConsumerWidget {
                                           return isLiked
                                               ? SvgPicture.asset(
                                                   AssetsConstants.likeFilledIcon,
-                                                  color: Pallete.redColor,
+                                                  colorFilter: const ColorFilter.mode(Pallete.redColor, BlendMode.srcIn),
                                                 )
                                               : SvgPicture.asset(
                                                   AssetsConstants
                                                       .likeOutlinedIcon,
-                                                  color: Pallete.greyColor,
+                                                  colorFilter: const ColorFilter.mode(Pallete.greyColor, BlendMode.srcIn),
                                                 );
                                         },
                                         likeCount: tweet.likes.length,
