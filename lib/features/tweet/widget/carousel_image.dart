@@ -1,5 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:x/constants/appwrite_constants.dart';
 
 class CarouselImage extends StatefulWidget {
   final List<String> imageLinks;
@@ -29,7 +31,7 @@ class _CarouselImageState extends State<CarouselImage> {
                     ),
                     margin: const EdgeInsets.all(10),
                     child: Image.network(
-                      link,
+                      kIsWeb ? link : link.replaceAll('http://127.0.0.1', 'http://172.29.112.1'),
                       fit: BoxFit.contain,
                     ),
                   ))
