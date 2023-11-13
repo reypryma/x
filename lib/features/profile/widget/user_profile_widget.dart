@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:x/common/common.dart';
 import 'package:x/constants/constants.dart';
+import 'package:x/core/enum/string_enum.dart';
 import 'package:x/features/auth/controller/auth_controller.dart';
 import 'package:x/features/profile/controller/profile_controller.dart';
 import 'package:x/features/profile/view/edit_user_profile.dart';
@@ -41,14 +42,14 @@ class UserProfileWidget extends ConsumerWidget {
                     color: Pallete.blueColor,
                   )
                       : Image.network(
-                    user.bannerPic,
+                    kIsWeb ? user.bannerPic : user.bannerPic.replaceHostIP(),
                     fit: BoxFit.fitWidth,
                   ),
                 ),
                 Positioned(
                   bottom: 0,
                   child: CircleAvatar(
-                    backgroundImage: NetworkImage(user.profilePic),
+                    backgroundImage: NetworkImage(kIsWeb ? user.profilePic: user.profilePic.replaceAll('http://127.0.0.1', 'http://172.29.112.1')),
                     radius: 45,
                   ),
                 ),

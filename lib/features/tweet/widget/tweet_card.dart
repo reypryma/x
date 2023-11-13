@@ -1,4 +1,5 @@
 import 'package:any_link_preview/any_link_preview.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -6,6 +7,7 @@ import 'package:like_button/like_button.dart';
 import 'package:x/common/common.dart';
 import 'package:x/constants/constants.dart';
 import 'package:x/core/core.dart';
+import 'package:x/core/enum/string_enum.dart';
 import 'package:x/features/auth/controller/auth_controller.dart';
 import 'package:x/features/profile/view/user_profile_view.dart';
 import 'package:x/features/tweet/controller/tweet_controller.dart';
@@ -56,7 +58,7 @@ class TweetCard extends ConsumerWidget {
                                     Navigator.push(context, UserProfileView.route(user));
                                 },
                                 child: CircleAvatar(
-                                  backgroundImage: NetworkImage(user.profilePic),
+                                  backgroundImage: NetworkImage(kIsWeb ? user.profilePic: user.profilePic.replaceHostIP()),
                                   radius: 35,
                                 ),
                               ),
